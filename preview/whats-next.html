@@ -76,12 +76,16 @@
 html,body{margin:0;padding:0;background:var(--bg-app);color:var(--text-strong);font-family:var(--font-sans)}
 .card{padding:22px;display:grid;gap:12px}
 .t{display:grid;grid-template-columns:80px 1fr;gap:14px;align-items:start}
-.time{font-family:var(--font-mono);color:var(--accent-citron);font-size:13px;padding-top:4px;letter-spacing:.04em}
-.tc{padding:12px 14px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid var(--line-soft)}
-strong{display:block;margin-bottom:4px;font-size:14px}
-p{margin:0;color:var(--text-muted);line-height:1.5;font-size:13px}
+.time{font-family:var(--font-mono);color:var(--text-muted);font-size:12px;padding-top:6px;letter-spacing:.08em;text-transform:uppercase}
+.t.now .time{color:var(--accent-citron)}
+.tc{padding:12px 14px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);display:flex;align-items:center;gap:10px}
+.t.now .tc{border-color:var(--line-medium);background:rgba(255,255,255,0.045)}
+.tc-text{flex:1}
+strong{display:block;font-size:14px;color:var(--text-strong)}
+.sub{color:var(--text-muted);font-size:12px;font-family:var(--font-mono);letter-spacing:.04em;text-transform:uppercase}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--accent-success);box-shadow:0 0 0 3px rgba(110,176,129,0.15);flex-shrink:0}
 </style></head><body><div class="card">
-<div class="t"><div class="time">08:00</div><div class="tc"><strong>Saturday brunch deck</strong><p>Three-screen deck on Studio board, runs through 14:00.</p></div></div>
-<div class="t"><div class="time">14:30</div><div class="tc"><strong>Now serving dinner</strong><p>Single-screen publish, high priority until replaced.</p></div></div>
-<div class="t"><div class="time">18:00</div><div class="tc"><strong>Evening calm mode</strong><p>Weather-driven deck rotates with house messages.</p></div></div>
+<div class="t now"><div class="time">Now</div><div class="tc"><div class="tc-text"><strong>Saturday brunch</strong><span class="sub">Studio · until 14:30</span></div><span class="live-dot"></span></div></div>
+<div class="t"><div class="time">14:30</div><div class="tc"><div class="tc-text"><strong>Saturday reopening</strong><span class="sub">Studio · auto-flip</span></div></div></div>
+<div class="t"><div class="time">18:00</div><div class="tc"><div class="tc-text"><strong>Evening calm mode</strong><span class="sub">Weather-driven · rotating</span></div></div></div>
 </div></body></html>
