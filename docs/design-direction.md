@@ -133,7 +133,16 @@ No sidebar visible during composition. Board selector is inline in the chat head
 
 ### Navigation
 
-Sidebar with nav items only visible when not in composition mode, or collapsed to icons. Nav items: Chat, Boards, Library, Data Sources, Settings. Active item gets `--line-medium` border + strong text.
+Chat is not a nav destination — chat is the product. The composition view (chat + board canvas) is the default surface; you never "navigate to" it, you return to it by closing whatever else you opened.
+
+Sidebar exposes **exactly four destinations**, collapsed to icons by default, labels on hover:
+
+1. **Boards** — paired Vestaboards, pair a new one
+2. **Data Sources** — connected integrations (Weather, Calendar, …)
+3. **Library** — saved screens and decks
+4. **Settings** — account, tone, timezone, notifications
+
+No fifth item. No dashboard, no analytics, no separate "workflow" page. Active item gets `--line-medium` border + strong text.
 
 ### Max page width
 
