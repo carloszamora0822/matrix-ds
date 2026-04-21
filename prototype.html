@@ -1,2709 +1,491 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Matrix</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<style id="inline-tokens">:root {
-  color-scheme: dark;
+<title>MATRIX-DS · Specimen grid</title>
+<link rel="stylesheet" href="./tokens.css"/>
+<link rel="stylesheet" href="./colors_and_type.css"/>
+<style id="proto-styles">
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;min-height:100vh}
+  body{
+    background:
+      radial-gradient(circle at 10% 0%,rgba(90,120,255,0.09),transparent 28%),
+      radial-gradient(circle at 90% 0%,rgba(255,106,42,0.08),transparent 30%),
+      linear-gradient(180deg,#111610,var(--bg-app));
+    color:var(--text-strong);
+    font-family:var(--font-sans);
+    -webkit-font-smoothing:antialiased;
+  }
 
-  --bg-app: #0e110e;
-  --bg-shell: #131813;
-  --bg-panel: #1b211b;
-  --bg-panel-2: #202821;
-  --bg-panel-3: #252f27;
-  --bg-paper: #f2ead7;
-  --bg-paper-2: #e5dbc1;
+  /* --- Page frame --- */
+  .page{width:min(1440px,calc(100vw - 40px));margin:0 auto;padding:48px 0 120px}
 
-  --text-strong: #f7efd9;
-  --text-body: #ddd3bb;
-  --text-muted: #a89f8d;
-  --text-dark: #241f16;
-  --text-dark-muted: #655b48;
+  /* --- Theme switcher (floating pill, top-right) --- */
+  .theme-switcher{
+    position:fixed;top:24px;right:24px;z-index:10;
+    display:inline-flex;gap:2px;padding:4px;
+    border-radius:var(--radius-pill);
+    background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02)),var(--bg-shell);
+    border:1px solid var(--line-medium);
+    box-shadow:var(--shadow-1),var(--shadow-inset);
+  }
+  .theme-switcher button{
+    appearance:none;border:0;background:transparent;cursor:pointer;
+    font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--text-muted);padding:8px 14px;border-radius:var(--radius-pill);
+  }
+  .theme-switcher button.active,
+  .theme-switcher button:hover{color:var(--text-strong);background:rgba(255,255,255,0.06)}
 
-  --line-soft: rgba(244, 234, 211, 0.08);
-  --line-medium: rgba(244, 234, 211, 0.16);
-  --line-strong: rgba(25, 31, 26, 0.12);
+  /* --- Proto head + nav --- */
+  .proto-head{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+  .mark{width:44px;height:44px;border-radius:12px;background:linear-gradient(180deg,#1f241f,#131813);border:1px solid var(--line-medium);position:relative;box-shadow:var(--shadow-inset);flex-shrink:0}
+  .mark::after{content:"";position:absolute;inset:6px;border-radius:8px;background:linear-gradient(135deg,var(--accent-ember) 0%,var(--accent-ember) 48%,transparent 48%,transparent 52%,#f7efd9 52%,#f7efd9 100%)}
+  .proto-head h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:40px;line-height:1;letter-spacing:-0.01em}
+  .proto-head .sub{margin:4px 0 0 0;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
 
-  --accent-ember: #ff6a2a;
-  --accent-ember-strong: #ff4d00;
-  --accent-cobalt: #5a78ff;
-  --accent-citron: #c7d654;
-  --accent-sand: #d6b970;
-  --accent-danger: #d56156;
-  --accent-success: #6eb081;
+  .proto-nav{display:flex;gap:4px;flex-wrap:wrap;margin:24px 0 56px;padding:6px;border-radius:var(--radius-pill);background:rgba(255,255,255,0.02);border:1px solid var(--line-soft);width:fit-content}
+  .proto-nav a{text-decoration:none;padding:8px 16px;border-radius:var(--radius-pill);font-size:13px;font-weight:500;color:var(--text-body)}
+  .proto-nav a:hover{background:rgba(255,255,255,0.05);color:var(--text-strong)}
 
-  --shadow-1: 0 18px 40px rgba(0, 0, 0, 0.22);
-  --shadow-2: 0 24px 72px rgba(0, 0, 0, 0.34);
-  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  /* --- Artboard --- */
+  .artboard{margin-bottom:88px}
+  .artboard-head{display:flex;align-items:baseline;gap:18px;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid var(--line-soft)}
+  .artboard-head .eyebrow{margin:0}
+  .artboard-head h2{margin:0;font-family:var(--font-display);font-weight:400;font-size:36px;line-height:1.05;letter-spacing:-0.01em;color:var(--text-strong)}
 
-  --radius-card: 28px;
-  --radius-panel: 22px;
-  --radius-control: 16px;
-  --radius-pill: 999px;
+  /* --- Specimen grid --- */
+  .specimen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+  .specimen-grid.wide{grid-template-columns:repeat(auto-fill,minmax(420px,1fr))}
+  .specimen-grid.full{grid-template-columns:1fr}
+  .specimen{padding:20px;border-radius:var(--radius-panel);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0)),var(--bg-shell);border:1px solid var(--line-soft);box-shadow:var(--shadow-inset);display:grid;gap:14px;align-content:start}
+  .specimen-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin:0}
+  .specimen .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .specimen-note{font-size:12px;color:var(--text-muted);line-height:1.5;margin:0}
 
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-7: 32px;
-  --space-8: 40px;
-  --space-9: 56px;
-  --space-10: 72px;
+  /* --- Foundations: swatch tiles --- */
+  .swatch{display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:center;padding:8px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid var(--line-soft);font-size:12px}
+  .swatch-chip{width:40px;height:40px;border-radius:10px;border:1px solid var(--line-soft)}
+  .swatch-name{font-family:var(--font-mono);font-size:11px;color:var(--text-strong);letter-spacing:.06em;display:block}
+  .swatch-val{font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:.06em;display:block;margin-top:2px}
 
-  --font-display:
-    "Instrument Serif", "Iowan Old Style", "Palatino Linotype", "Book Antiqua",
-    Georgia, serif;
-  --font-sans:
-    "Manrope", "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --font-mono:
-    "IBM Plex Mono", "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono",
-    monospace;
+  /* --- Foundations: scale rows --- */
+  .scale-row{display:grid;grid-template-columns:80px 1fr auto;gap:12px;align-items:center;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid var(--line-soft)}
+  .scale-key{font-family:var(--font-mono);font-size:11px;color:var(--text-muted);letter-spacing:.06em}
+  .scale-bar{height:4px;border-radius:4px;background:var(--accent-citron)}
+  .scale-val{font-family:var(--font-mono);font-size:11px;color:var(--text-strong)}
+  .radius-demo{width:72px;height:56px;background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02));border:1px solid var(--line-medium)}
+  .shadow-demo{width:80px;height:56px;background:var(--bg-panel-2);border:1px solid var(--line-soft);border-radius:12px}
 
-  --text-xs: 12px;
-  --text-sm: 14px;
-  --text-md: 16px;
-  --text-lg: 18px;
-  --text-xl: 24px;
-  --text-2xl: 34px;
-  --text-3xl: 52px;
+  /* --- Primitives: buttons --- */
+  .btn{position:relative;isolation:isolate;overflow:hidden;appearance:none;border:1px solid transparent;border-radius:var(--radius-control);padding:11px 16px;min-height:42px;font:inherit;font-weight:800;letter-spacing:-0.01em;cursor:pointer;font-size:14px;transition:transform var(--speed-fast) var(--ease-standard)}
+  .btn.primary{color:#180f0a;background:linear-gradient(180deg,#ff8b55,var(--accent-ember));box-shadow:0 10px 20px var(--button-primary-shadow,rgba(255,106,42,0.2))}
+  .btn.secondary{color:var(--text-strong);background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02));border-color:var(--line-medium)}
+  .btn.ghost{color:var(--text-body);background:transparent}
+  .btn.danger{color:#fff;background:linear-gradient(180deg,#e47a72,var(--accent-danger));box-shadow:0 10px 20px rgba(213,97,86,0.2)}
+  .btn:hover{transform:translateY(-1px)}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+  .btn.is-loading{pointer-events:none;opacity:.7}
+  .btn.is-loading::after{content:"";display:inline-block;width:10px;height:10px;border-radius:999px;border:2px solid currentColor;border-right-color:transparent;margin-left:8px;animation:spin 900ms linear infinite;vertical-align:-2px}
+  @keyframes spin{to{transform:rotate(360deg)}}
 
-  --leading-tight: 1.05;
-  --leading-snug: 1.2;
-  --leading-normal: 1.5;
+  /* --- Primitives: fields --- */
+  .field{display:grid;gap:6px}
+  .field label{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted)}
+  .field input,.field textarea{appearance:none;border:1px solid var(--line-medium);background:rgba(255,255,255,0.03);color:var(--text-strong);border-radius:var(--radius-control);padding:11px 14px;font:inherit;font-size:14px;outline:none;resize:none}
+  .field input:focus,.field textarea:focus{border-color:var(--accent-cobalt);box-shadow:0 0 0 4px rgba(90,120,255,0.12)}
+  .field.error input{border-color:var(--accent-danger)}
+  .field .err{font-size:12px;color:var(--accent-danger)}
+  .field input:disabled{opacity:.4;cursor:not-allowed}
 
-  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
-  --speed-fast: 140ms;
-  --speed-base: 220ms;
-}
-</style>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{background:#0e110e;color:#f7efd9;font-family:var(--font-sans);-webkit-font-smoothing:antialiased;height:100%;overflow:hidden}
-:root{
-  --deck:#0e110e;--panel:#14181a;--panel-2:#1b211b;
-  --rule:rgba(247,239,217,0.10);--rule-h:rgba(247,239,217,0.20);
-  --muted:rgba(247,239,217,0.55);--dim:rgba(247,239,217,0.32);
-  --ink:#f7efd9;
-  --paper:#f2ead7;--paper-2:#e5dbc1;--paper-ink:#241f16;--paper-muted:#6b5f46;
-  --live:#c7d654;--ember:#ff6a2a;--cobalt:#5a78ff;
-  --serif:var(--font-display);--mono:var(--font-mono);--sans:var(--font-sans);
-}
-button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
-input,textarea{font:inherit}
-.cap{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);font-weight:500}
+  /* --- Primitives: chips --- */
+  .chip{border-radius:var(--radius-pill);padding:6px 12px;font-size:12px;font-weight:500;border:1px solid var(--line-medium);background:rgba(255,255,255,0.03);color:var(--text-body);display:inline-flex;align-items:center;gap:6px}
+  .chip.sugg{padding:5px 10px;color:var(--text-muted);background:rgba(255,255,255,0.02);cursor:pointer}
+  .chip.sugg:hover{color:var(--text-body);background:rgba(255,255,255,0.05)}
 
-.app{height:100vh;display:grid;grid-template-rows:auto auto auto 1fr auto;gap:0}
+  /* --- Primitives: nav items --- */
+  .nav-item{padding:10px 13px;border-radius:14px;color:var(--text-body);font-size:14px;font-weight:500;border:1px solid transparent;display:flex;align-items:center;gap:10px;cursor:pointer}
+  .nav-item.active{background:rgba(255,255,255,0.06);border-color:var(--line-medium);color:var(--text-strong);font-weight:700}
+  .nav-item .n-dot{width:6px;height:6px;border-radius:999px;background:var(--text-muted);opacity:.6}
+  .nav-item.active .n-dot{background:var(--accent-citron);opacity:1}
 
-/* TOP BAR */
-.top{display:flex;justify-content:space-between;align-items:center;padding:14px 28px;border-bottom:1px solid var(--rule)}
-.brand{display:flex;align-items:center;gap:10px}
-.mark{width:14px;height:14px;position:relative}
-.mark::before,.mark::after{content:"";position:absolute;inset:0}
-.mark::before{background:linear-gradient(135deg,var(--ember) 0 50%, transparent 50%)}
-.mark::after{background:linear-gradient(135deg,transparent 50%, var(--ink) 50%)}
-.brand-name{font-family:var(--serif);font-size:18px}
-.who{font-family:var(--mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim)}
-.who b{color:var(--muted);font-weight:500}
+  /* --- Primitives: live-dot --- */
+  .live-dot{display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--accent-success);box-shadow:0 0 0 3px rgba(110,176,129,0.15);flex-shrink:0}
 
-/* AGENT LANE */
-.agent{padding:18px 28px;border-bottom:1px solid var(--rule);background:linear-gradient(180deg,rgba(90,120,255,0.04),transparent);display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center}
-.agent-icon{width:32px;height:32px;border:1px solid var(--cobalt);display:grid;place-items:center;font-family:var(--serif);font-size:18px;color:var(--cobalt);font-style:italic;flex:none}
-.agent-msg{font-family:var(--sans);font-size:14px;line-height:1.5;color:var(--ink)}
-.agent-msg b{color:var(--cobalt);font-weight:500;font-style:italic;font-family:var(--serif);font-size:16px}
-.agent-msg small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);margin-top:4px}
-.agent-actions{display:flex;gap:8px;flex:none}
-.btn{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:9px 14px;font-weight:600;border:1px solid var(--rule-h);background:transparent;color:var(--ink)}
-.btn:hover{background:var(--ink);color:var(--deck)}
-.btn.primary{background:var(--cobalt);color:#fff;border-color:var(--cobalt)}
-.btn.primary:hover{background:#7691ff}
-.btn.ghost{border-color:var(--rule);color:var(--muted);font-weight:500}
+  /* --- Domain: chat messages --- */
+  .msg{padding:12px 14px;border-radius:20px;line-height:1.5;font-size:14px;max-width:85%}
+  .msg.u{justify-self:end;background:rgba(90,120,255,0.12);border:1px solid rgba(90,120,255,0.24);color:#e7ecff}
+  .msg.a{background:rgba(255,255,255,0.04);border:1px solid var(--line-medium);color:var(--text-strong)}
+  .stream{display:grid;gap:12px}
 
-/* DAY SCRUBBER */
-.days{display:flex;gap:0;padding:0 28px;border-bottom:1px solid var(--rule);overflow-x:auto;scrollbar-width:none}
-.days::-webkit-scrollbar{display:none}
-.day{padding:14px 18px;display:flex;flex-direction:column;gap:2px;border-right:1px solid var(--rule);cursor:pointer;flex:none;min-width:88px}
-.day:first-child{border-left:1px solid var(--rule)}
-.day .dow{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--dim)}
-.day .num{font-family:var(--serif);font-size:24px;line-height:1;color:var(--muted)}
-.day .stat{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);margin-top:4px}
-.day:hover{background:rgba(247,239,217,0.02)}
-.day.today{background:rgba(255,106,42,0.05)}
-.day.today .dow{color:var(--ember)}
-.day.today .num{color:var(--ink)}
-.day.today .stat{color:var(--ember)}
-.day.sel{background:rgba(247,239,217,0.04);border-bottom:2px solid var(--ink);margin-bottom:-1px}
-.day.sel .num{color:var(--ink)}
-.day.future .num{color:var(--dim)}
-.day .stat .draftdot{color:var(--ember);margin-left:4px}
+  /* --- Domain: composer --- */
+  .composer{border-radius:18px;padding:12px;background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);display:grid;gap:10px}
+  .composer textarea{width:100%;min-height:64px;border:0;background:transparent;color:var(--text-strong);font:inherit;font-size:14px;resize:none;outline:none;line-height:1.5}
+  .composer-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .composer-suggs{display:flex;gap:6px;flex-wrap:wrap}
 
-/* BOARD TABS */
-.boards-tabs{display:flex;gap:0;padding:14px 28px 0;justify-content:space-between;align-items:flex-end}
-.tabs{display:flex;gap:0;border-bottom:1px solid var(--rule);flex:1}
-.tab{padding:10px 16px;font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);background:transparent;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:8px;font-weight:500}
-.tab:hover{color:var(--ink)}
-.tab.on{color:var(--ink);border-bottom-color:var(--ember)}
-.tab .dot{width:6px;height:6px;border-radius:50%;background:var(--dim)}
-.tab .dot.live{background:var(--live);box-shadow:0 0 6px rgba(199,214,84,0.6)}
-.now-text{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--dim);padding:0 0 10px}
-.now-text b{color:var(--live);font-weight:500}
-.now-text b::before{content:"●";margin-right:4px}
+  /* --- Domain: artifact (inline board card in message) --- */
+  .artifact{margin-top:10px;padding:12px;border-radius:18px;background:rgba(0,0,0,0.25);border:1px solid var(--line-soft);display:grid;gap:10px}
+  .artifact-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .artifact-title{font-weight:700;font-size:13px;color:var(--text-strong)}
 
-/* STRIP */
-.strip-wrap{position:relative;overflow:hidden;background:#0a0c0a;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-.strip-wrap::before,.strip-wrap::after{content:"";position:absolute;top:0;bottom:0;width:80px;pointer-events:none;z-index:3}
-.strip-wrap::before{left:0;background:linear-gradient(90deg,#0a0c0a,transparent)}
-.strip-wrap::after{right:0;background:linear-gradient(270deg,#0a0c0a,transparent)}
-.strip{display:flex;gap:0;align-items:center;padding:32px 80px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:rgba(247,239,217,0.15) transparent;height:100%}
-.strip::-webkit-scrollbar{height:8px}
-.strip::-webkit-scrollbar-thumb{background:rgba(247,239,217,0.15)}
+  /* --- Domain: board card (in Boards list) --- */
+  .bc{padding:14px;border-radius:var(--radius-panel);background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);display:grid;gap:12px}
+  .bc-head{display:flex;align-items:center;gap:10px}
+  .bc-name{font-weight:700;font-size:14px;color:var(--text-strong)}
+  .bc-meta{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-left:auto}
+  .bc-preview{background:#080808;border-radius:12px;aspect-ratio:22/6;overflow:hidden}
+  .bc-footer{font-size:12px;color:var(--text-muted);line-height:1.4}
 
-/* GAP */
-.gap{flex:none;width:120px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--dim);position:relative;padding:0 8px}
-.gap-line{width:100%;height:1px;background:repeating-linear-gradient(90deg,var(--dim) 0 6px, transparent 6px 12px)}
-.gap-text{font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--dim);white-space:nowrap}
-.gap-text b{color:var(--muted);font-weight:500}
+  /* --- Domain: board canvas (paper rail) --- */
+  .rail{background:linear-gradient(180deg,var(--bg-paper),var(--bg-paper-2));border-radius:var(--radius-card);padding:20px;display:grid;gap:14px;color:var(--text-dark);box-shadow:var(--shadow-1),var(--shadow-inset)}
+  .rail h3{margin:0;font-family:var(--font-display);font-weight:400;font-size:26px;line-height:1.05;color:var(--text-dark)}
+  .rail .rail-eye{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#b24a14;margin:0 0 4px 0}
+  .canvas-frame{background:#080808;border-radius:18px;padding:4px;aspect-ratio:22/6}
+  .rail-note{font-size:12px;color:var(--text-dark-muted);line-height:1.5;padding:10px 12px;border-radius:12px;background:rgba(33,25,17,0.06);border:1px solid rgba(33,25,17,0.08)}
+  .rail-note strong{color:var(--text-dark);display:block;margin-bottom:2px}
 
-/* FRAME (each board state) */
-.frame{flex:none;width:300px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:transform 0.15s}
-.frame:hover{transform:translateY(-2px)}
-.frame .frame-when{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:baseline}
-.frame .frame-when b{color:var(--ink);font-weight:500}
-.frame .frame-when .tag{font-size:9px;letter-spacing:0.18em;color:var(--dim)}
-.frame .vesta-host{padding:10px;background:#000;border:1px solid #222}
-.frame .vesta-host[data-component]{padding:0}
-.frame .frame-foot{font-family:var(--sans);font-size:13px;line-height:1.35;color:var(--ink);padding:0 2px}
-.frame .frame-foot small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:0.06em;color:var(--dim);margin-top:3px;text-transform:uppercase}
+  /* --- Domain: confirmation card --- */
+  .confirm{padding:18px 20px;border-radius:var(--radius-panel);background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);display:grid;gap:14px}
+  .confirm-q{font-family:var(--font-display);font-weight:400;font-size:22px;line-height:1.2;color:var(--text-strong);margin:0}
+  .facts{display:grid;gap:6px;padding:12px 14px;border-radius:14px;background:rgba(0,0,0,0.2);border:1px solid var(--line-soft)}
+  .fact{display:flex;gap:12px;font-size:13px;line-height:1.5}
+  .fact-key{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);min-width:70px;padding-top:2px}
+  .fact-val{color:var(--text-strong)}
+  .confirm-actions{display:flex;gap:8px;justify-content:flex-end}
 
-/* states */
-.frame.past{opacity:0.45}
-.frame.past:hover{opacity:0.75}
-.frame.past .vesta-host{border-color:#1a1a1a}
-.frame.now .vesta-host{border:1px solid var(--live);box-shadow:0 0 0 4px rgba(199,214,84,0.12),0 0 24px rgba(199,214,84,0.2)}
-.frame.now .frame-when b{color:var(--live)}
-.frame.now .frame-when .tag{color:var(--live);font-weight:600}
-.frame.next .vesta-host{border:1px solid var(--ember)}
-.frame.next .frame-when b{color:var(--ember)}
-.frame.next .frame-when .tag{color:var(--ember)}
-.frame.draft{opacity:0.85}
-.frame.draft .vesta-host{border:1px dashed var(--ember);background:#0a0808}
-.frame.draft .frame-when .tag{color:var(--ember)}
-.frame.empty .vesta-host{border:1px dashed rgba(247,239,217,0.18);background:#0a0c0a;height:118px;display:grid;place-items:center}
-.frame.empty .vesta-host .empty-ask{font-family:var(--serif);font-style:italic;color:var(--muted);font-size:14px;text-align:center;padding:0 18px;line-height:1.3}
-.frame.empty:hover .vesta-host .empty-ask{color:var(--ink)}
-.frame.empty .frame-when .tag{color:var(--dim)}
+  /* --- Domain: board selector --- */
+  .chat-head-demo{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid var(--line-soft)}
+  .selector{display:inline-flex;align-items:center;gap:10px;font-size:14px;color:var(--text-body);cursor:pointer;appearance:none;border:0;background:transparent;padding:0;font-family:inherit}
+  .selector strong{color:var(--text-strong);font-weight:700}
+  .selector .sep{color:var(--text-muted);font-size:12px}
+  .selector .meta{color:var(--text-muted);font-size:12px;font-family:var(--font-mono);letter-spacing:.04em;text-transform:uppercase}
+  .selector .caret{width:9px;height:9px;border-right:1.5px solid var(--text-muted);border-bottom:1.5px solid var(--text-muted);transform:rotate(45deg) translateY(-2px);margin-left:4px}
+  .rundown-demo{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--text-muted);text-transform:uppercase}
 
-/* DAY MARKER between frames when day flips */
-.day-mark{flex:none;width:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-left:1px dashed rgba(247,239,217,0.18);border-right:1px dashed rgba(247,239,217,0.18);padding:0 12px;align-self:stretch}
-.day-mark .dm-num{font-family:var(--serif);font-size:24px;color:var(--muted);line-height:1}
-.day-mark .dm-dow{font-family:var(--mono);font-size:9px;letter-spacing:0.18em;color:var(--dim);text-transform:uppercase}
+  /* --- Domain: what's next --- */
+  .wn{display:grid;gap:10px}
+  .wn-row{display:grid;grid-template-columns:70px 1fr;gap:12px;align-items:start}
+  .wn-time{font-family:var(--font-mono);color:var(--text-muted);font-size:11px;padding-top:8px;letter-spacing:.08em;text-transform:uppercase}
+  .wn-row.now .wn-time{color:var(--accent-citron)}
+  .wn-body{padding:10px 12px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);display:flex;align-items:center;gap:10px}
+  .wn-row.now .wn-body{border-color:var(--line-medium);background:rgba(255,255,255,0.045)}
+  .wn-text{flex:1}
+  .wn-text strong{display:block;font-size:13px;color:var(--text-strong)}
+  .wn-text .sub{color:var(--text-muted);font-size:11px;font-family:var(--font-mono);letter-spacing:.04em;text-transform:uppercase}
 
-/* BOTTOM ASK */
-.ask{padding:14px 28px;border-top:1px solid var(--rule);display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;background:#0c0f0c}
-.ask-glyph{font-family:var(--serif);font-size:24px;font-style:italic;color:var(--ember);width:34px;text-align:center}
-.ask-input{background:transparent;border:0;border-bottom:1px solid var(--rule-h);padding:10px 0;color:var(--ink);font-family:var(--sans);font-size:15px;letter-spacing:-0.005em;outline:none;width:100%}
-.ask-input::placeholder{color:var(--dim);font-style:italic;font-family:var(--serif);font-size:18px}
-.ask-input:focus{border-bottom-color:var(--ember)}
-.quick{display:flex;gap:6px;flex:none}
-.q{padding:6px 10px;font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);border:1px solid var(--rule)}
-.q:hover{color:var(--ink);border-color:var(--rule-h)}
+  /* --- Composed surfaces --- */
+  .kit-links{display:grid;gap:8px}
+  .kit-link{padding:14px 16px;border-radius:var(--radius-panel);background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);display:flex;justify-content:space-between;align-items:center;gap:14px;text-decoration:none;color:var(--text-strong);font-weight:600}
+  .kit-link:hover{border-color:var(--line-medium);background:rgba(255,255,255,0.05)}
+  .kit-link .kit-sub{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);font-weight:400}
 
-/* SHEET (edit a frame) */
-.sheet{position:fixed;inset:0;background:rgba(8,10,8,0.85);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:100;padding:40px}
-.sheet.open{display:flex}
-.sheet-card{background:var(--paper);color:var(--paper-ink);width:100%;max-width:560px;padding:0;display:flex;flex-direction:column;max-height:90vh;overflow:auto}
-.sheet-head{padding:20px 24px 16px;border-bottom:1px solid rgba(36,31,22,0.15);display:flex;justify-content:space-between;align-items:baseline;gap:14px}
-.sheet-head h3{font-family:var(--serif);font-size:24px;font-weight:400;line-height:1.1}
-.sheet-head h3 em{font-style:italic;color:#a83a14}
-.sheet-when{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;color:var(--paper-muted);text-transform:uppercase;white-space:nowrap}
-.sheet-body{padding:20px 24px;display:flex;flex-direction:column;gap:16px}
-.sheet-body label{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;color:var(--paper-muted);text-transform:uppercase;display:block;margin-bottom:4px}
-.line-edit{font-family:var(--mono);font-size:18px;letter-spacing:0.06em;text-transform:uppercase;color:var(--paper-ink);background:transparent;border:0;border-bottom:1px solid rgba(36,31,22,0.2);padding:10px 0;width:100%;outline:none;font-weight:500}
-.line-edit:focus{border-bottom-color:#a83a14}
-.line-row{display:grid;grid-template-columns:36px 1fr 50px;gap:10px;align-items:center}
-.line-row .ln{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;color:var(--paper-muted)}
-.line-row .ct{font-family:var(--mono);font-size:10px;color:var(--paper-muted);text-align:right}
-.ask-agent{padding:14px;background:rgba(90,120,255,0.06);border-left:2px solid var(--cobalt);display:flex;gap:10px;align-items:center}
-.ask-agent .glyph{font-family:var(--serif);font-style:italic;color:var(--cobalt);font-size:18px;width:18px}
-.ask-agent input{background:transparent;border:0;padding:0;outline:none;font-family:var(--sans);font-size:13px;color:var(--paper-ink);flex:1}
-.ask-agent input::placeholder{color:var(--paper-muted);font-style:italic}
-.sheet-foot{padding:14px 24px;background:var(--paper-2);display:flex;justify-content:space-between;gap:8px;border-top:1px solid rgba(36,31,22,0.12)}
-.sheet-foot .left{display:flex;gap:8px}
-.sheet-foot .btn{border-color:var(--paper-ink);color:var(--paper-ink)}
-.sheet-foot .btn:hover{background:var(--paper-ink);color:var(--paper)}
-.sheet-foot .btn.primary{background:var(--paper-ink);color:var(--paper)}
-.sheet-foot .btn.primary:hover{background:#0e110e}
-.sheet-foot .btn.del{border-color:#a83a14;color:#a83a14}
-.sheet-foot .btn.del:hover{background:#a83a14;color:var(--paper)}
-.sheet-meta{padding:12px 24px;font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:var(--paper-muted);text-transform:uppercase;border-top:1px dashed rgba(36,31,22,0.15);display:flex;justify-content:space-between}
-.sheet-meta b{color:var(--paper-ink);font-weight:500}
 </style>
 </head>
-<body>
+<body data-screen-label="MATRIX-DS Specimen Grid">
 
-<div class="app" data-screen-label="01 Strip">
+<!-- Theme switcher -->
+<div class="theme-switcher" role="tablist" aria-label="Theme">
+  <button type="button" data-theme-switch="editorialControlRoom" class="active">Editorial</button>
+  <button type="button" data-theme-switch="signalAtelier">Signal Atelier</button>
+  <button type="button" data-theme-switch="amberBroadcast">Amber Broadcast</button>
+</div>
 
-  <header class="top">
-    <div class="brand"><span class="mark"></span><span class="brand-name">Matrix</span></div>
-    <div class="who"><b>Carlos</b> · <b>Austin</b> · 13:47</div>
+<div class="page">
+
+  <!-- Head -->
+  <header class="proto-head">
+    <div class="mark"></div>
+    <div>
+      <h1>MATRIX-DS</h1>
+      <p class="sub">Specimen grid · v0.2.0-alpha.1 · editorial control room</p>
+    </div>
   </header>
 
-  <div class="agent">
-    <div class="agent-icon">m</div>
-    <div class="agent-msg">
-      I planned the rest of <b>this week</b> using last week's pattern, the menu calendar, and Saturday weather. <b>Two boards still need your eyes</b> — dinner and late service tonight. Sunday brunch and Monday's kickoff are already drafted.
-      <small>Last update 3 min ago · 8 boards drafted · 2 awaiting you</small>
-    </div>
-    <div class="agent-actions">
-      <button class="btn ghost">Show plan</button>
-      <button class="btn primary">Approve all 6</button>
-    </div>
-  </div>
+  <!-- Nav -->
+  <nav class="proto-nav" aria-label="Prototype sections">
+    <a href="#foundations">Foundations</a>
+    <a href="#primitives">Primitives</a>
+    <a href="#modules">Domain modules</a>
+    <a href="#surfaces">Composed surfaces</a>
+  </nav>
 
-  <div class="days" id="days">
-    <div class="day"><span class="dow">Wed</span><span class="num">15</span><span class="stat">5 aired</span></div>
-    <div class="day"><span class="dow">Thu</span><span class="num">16</span><span class="stat">6 aired</span></div>
-    <div class="day"><span class="dow">Fri</span><span class="num">17</span><span class="stat">7 aired</span></div>
-    <div class="day today sel"><span class="dow">Sat · today</span><span class="num">18</span><span class="stat">3 done · 2 left<span class="draftdot">●</span></span></div>
-    <div class="day future"><span class="dow">Sun</span><span class="num">19</span><span class="stat">3 drafted</span></div>
-    <div class="day future"><span class="dow">Mon</span><span class="num">20</span><span class="stat">closed · 1</span></div>
-    <div class="day future"><span class="dow">Tue</span><span class="num">21</span><span class="stat">open</span></div>
-    <div class="day future"><span class="dow">Wed</span><span class="num">22</span><span class="stat">open</span></div>
-    <div class="day future"><span class="dow">Thu</span><span class="num">23</span><span class="stat">open</span></div>
-    <div class="day future"><span class="dow">Fri</span><span class="num">24</span><span class="stat">open</span></div>
-    <div class="day future"><span class="dow">Sat</span><span class="num">25</span><span class="stat">open</span></div>
-  </div>
+  <!-- ============================================================ -->
+  <!-- 01 / Foundations -->
+  <!-- ============================================================ -->
+  <section id="foundations" class="artboard">
+    <header class="artboard-head">
+      <p class="eyebrow">01 / Foundations</p>
+      <h2>Tokens, scales, motion</h2>
+    </header>
+    <div class="specimen-grid">
 
-  <div class="boards-tabs">
-    <div class="tabs">
-      <button class="tab on"><span class="dot live"></span>Storefront · Aus-01</button>
-      <button class="tab"><span class="dot live"></span>Patio</button>
-      <button class="tab"><span class="dot live"></span>Kitchen</button>
-      <button class="tab"><span class="dot"></span>+ Add board</button>
-    </div>
-    <div class="now-text"><b>now</b> 13:47 · midday brunch</div>
-  </div>
+      <!-- Surfaces -->
+      <div class="specimen">
+        <p class="specimen-label">Surfaces</p>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--bg-app)"></div><div><span class="swatch-name">--bg-app</span><span class="swatch-val">app ground</span></div></div>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--bg-shell)"></div><div><span class="swatch-name">--bg-shell</span><span class="swatch-val">card + panel base</span></div></div>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--bg-panel)"></div><div><span class="swatch-name">--bg-panel</span><span class="swatch-val">nested panel</span></div></div>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--bg-paper)"></div><div><span class="swatch-name">--bg-paper</span><span class="swatch-val">stage-lit insert</span></div></div>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--bg-paper-2)"></div><div><span class="swatch-name">--bg-paper-2</span><span class="swatch-val">paper shadow side</span></div></div>
+      </div>
 
-  <div class="strip-wrap">
-    <div class="strip" id="strip">
-      <div class="frame past" data-edit="Close">
-        <div class="frame-when"><b>YESTERDAY 22:00</b><span class="tag">CLOSED</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="closing" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Close<small>Aired · 8h ago</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>8h overnight</b> · no flips</div><div class="gap-line"></div></div><div class="day-mark"><div class="dm-num">18</div><div class="dm-dow">SAT · TODAY</div></div><div class="frame past" data-edit="Morning open">
-        <div class="frame-when"><b>06:00</b><span class="tag">AIRED</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="morning" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Morning open<small>Aired · 7h ago</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>2h</b> · holding</div><div class="gap-line"></div></div><div class="frame past" data-edit="Breakfast service">
-        <div class="frame-when"><b>08:00</b><span class="tag">AIRED</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="breakfast" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Breakfast service<small>Aired · 5h ago</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>4h</b> · holding</div><div class="gap-line"></div></div><div class="frame now" data-edit="Midday brunch">
-        <div class="frame-when"><b>12:00</b><span class="tag">ON AIR · 1h 47m</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="brunch" data-board-product="console" data-autoplay="true"></div></div>
-        <div class="frame-foot">Midday brunch<small>Live · until 14:30</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>43m</b> · until next flip</div><div class="gap-line"></div></div><div class="frame next" data-edit="Saturday reopening">
-        <div class="frame-when"><b>14:30</b><span class="tag">NEXT</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="reopening" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Saturday reopening<small>Drafted by agent · auto-flip</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>1h 30m</b> · holding</div><div class="gap-line"></div></div><div class="frame next" data-edit="Afternoon idle">
-        <div class="frame-when"><b>16:00</b><span class="tag">QUEUED</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="idle" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Afternoon idle<small>From last Saturday</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>2h</b> · holding</div><div class="gap-line"></div></div><div class="frame draft" data-edit="Dinner transition">
-        <div class="frame-when"><b>18:00</b><span class="tag">NEEDS YOU</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="dinner" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Dinner transition<small>Agent waiting on confirmation</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>2h 30m</b> · holding</div><div class="gap-line"></div></div><div class="frame draft" data-edit="Late service">
-        <div class="frame-when"><b>20:30</b><span class="tag">NEEDS YOU</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="late" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Late service<small>Agent waiting on confirmation</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>1h 30m</b> · holding</div><div class="gap-line"></div></div><div class="frame next" data-edit="Close">
-        <div class="frame-when"><b>22:00</b><span class="tag">AUTO</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="closing" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Close<small>Set & forget</small></div>
-      </div><div class="day-mark"><div class="dm-num">19</div><div class="dm-dow">SUN</div></div><div class="frame next" data-edit="Sunday roast prep">
-        <div class="frame-when"><b>08:00</b><span class="tag">AGENT DRAFT</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="breakfast" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Sunday roast prep<small>Drafted overnight · easy week</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>3h</b> · planned holding</div><div class="gap-line"></div></div><div class="frame next" data-edit="Bottomless brunch">
-        <div class="frame-when"><b>11:00</b><span class="tag">AGENT DRAFT</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="brunch" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Bottomless brunch<small>Pulled from menu calendar</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>4h</b> · holding</div><div class="gap-line"></div></div><div class="frame empty" data-edit="Quiet afternoon">
-        <div class="frame-when"><b>15:00</b><span class="tag">OPEN</span></div>
-        <div class="vesta-host"><div class="empty-ask">Nothing scheduled · tap to ask</div></div>
-        <div class="frame-foot">Quiet afternoon<small>Tap to schedule something</small></div>
-      </div><div class="day-mark"><div class="dm-num">20</div><div class="dm-dow">MON</div></div><div class="frame next" data-edit="Mon — week kickoff">
-        <div class="frame-when"><b>06:00</b><span class="tag">WEEKLY</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="morning" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Mon — week kickoff<small>Recurring</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>all day</b> · closed monday</div><div class="gap-line"></div></div>
-    </div>
-  </div>
+      <!-- Text -->
+      <div class="specimen">
+        <p class="specimen-label">Text</p>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--text-strong)"></div><div><span class="swatch-name">--text-strong</span><span class="swatch-val">headlines, UI strong</span></div></div>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--text-body)"></div><div><span class="swatch-name">--text-body</span><span class="swatch-val">body copy</span></div></div>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--text-muted)"></div><div><span class="swatch-name">--text-muted</span><span class="swatch-val">metadata, captions</span></div></div>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--text-dark)"></div><div><span class="swatch-name">--text-dark</span><span class="swatch-val">on paper — strong</span></div></div>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--text-dark-muted)"></div><div><span class="swatch-name">--text-dark-muted</span><span class="swatch-val">on paper — muted</span></div></div>
+      </div>
 
-  <div class="ask">
-    <div class="ask-glyph">m</div>
-    <input class="ask-input" placeholder="Ask the agent · &ldquo;close early next Tuesday&rdquo;"/>
-    <div class="quick">
-      <button class="q">Plan next week</button>
-      <button class="q">Holiday on May 27</button>
-      <button class="q">Copy this day to next Sat</button>
+      <!-- Signal -->
+      <div class="specimen">
+        <p class="specimen-label">Signal</p>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--accent-ember)"></div><div><span class="swatch-name">--accent-ember</span><span class="swatch-val">commit, primary</span></div></div>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--accent-cobalt)"></div><div><span class="swatch-name">--accent-cobalt</span><span class="swatch-val">focus, user voice</span></div></div>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--accent-citron)"></div><div><span class="swatch-name">--accent-citron</span><span class="swatch-val">eyebrow, spark</span></div></div>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--accent-success)"></div><div><span class="swatch-name">--accent-success</span><span class="swatch-val">live dot</span></div></div>
+        <div class="swatch"><div class="swatch-chip" style="background:var(--accent-danger)"></div><div><span class="swatch-name">--accent-danger</span><span class="swatch-val">destructive</span></div></div>
+      </div>
+
+      <!-- Radii -->
+      <div class="specimen">
+        <p class="specimen-label">Radii</p>
+        <div class="scale-row"><span class="scale-key">card</span><div class="radius-demo" style="border-radius:var(--radius-card)"></div><span class="scale-val">28px</span></div>
+        <div class="scale-row"><span class="scale-key">panel</span><div class="radius-demo" style="border-radius:var(--radius-panel)"></div><span class="scale-val">22px</span></div>
+        <div class="scale-row"><span class="scale-key">control</span><div class="radius-demo" style="border-radius:var(--radius-control)"></div><span class="scale-val">16px</span></div>
+        <div class="scale-row"><span class="scale-key">pill</span><div class="radius-demo" style="border-radius:var(--radius-pill);width:56px"></div><span class="scale-val">∞</span></div>
+      </div>
+
+      <!-- Shadows -->
+      <div class="specimen">
+        <p class="specimen-label">Shadows</p>
+        <div class="scale-row"><span class="scale-key">1</span><div class="shadow-demo" style="box-shadow:var(--shadow-1)"></div><span class="scale-val">card lift</span></div>
+        <div class="scale-row"><span class="scale-key">2</span><div class="shadow-demo" style="box-shadow:var(--shadow-2)"></div><span class="scale-val">modal</span></div>
+        <div class="scale-row"><span class="scale-key">inset</span><div class="shadow-demo" style="box-shadow:var(--shadow-inset)"></div><span class="scale-val">edge sheen</span></div>
+      </div>
+
+      <!-- Spacing -->
+      <div class="specimen">
+        <p class="specimen-label">Spacing</p>
+        <div class="scale-row"><span class="scale-key">space-2</span><div class="scale-bar" style="width:var(--space-2)"></div><span class="scale-val">8</span></div>
+        <div class="scale-row"><span class="scale-key">space-4</span><div class="scale-bar" style="width:var(--space-4)"></div><span class="scale-val">16</span></div>
+        <div class="scale-row"><span class="scale-key">space-6</span><div class="scale-bar" style="width:var(--space-6)"></div><span class="scale-val">24</span></div>
+        <div class="scale-row"><span class="scale-key">space-7</span><div class="scale-bar" style="width:var(--space-7)"></div><span class="scale-val">32</span></div>
+        <div class="scale-row"><span class="scale-key">space-9</span><div class="scale-bar" style="width:var(--space-9)"></div><span class="scale-val">56</span></div>
+      </div>
+
+      <!-- Type (the three sizes) -->
+      <div class="specimen wide" style="grid-column:span 1">
+        <p class="specimen-label">Type — three sizes, total</p>
+        <div style="font-family:var(--font-display);font-weight:400;font-size:34px;line-height:1.05;color:var(--text-strong)">Board preview / display moments</div>
+        <div style="font-family:var(--font-sans);font-size:14px;line-height:1.5;color:var(--text-body)">Body — Manrope 14px, 1.5 leading. Interface copy, chat messages, descriptions.</div>
+        <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted)">Label — IBM plex mono 11px, 0.14em tracked. Metadata, eyebrows, status</div>
+      </div>
+
     </div>
-  </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 02 / Primitives -->
+  <!-- ============================================================ -->
+  <section id="primitives" class="artboard">
+    <header class="artboard-head">
+      <p class="eyebrow">02 / Primitives</p>
+      <h2>Atomic UI — buttons, fields, chips, nav, live-dot</h2>
+    </header>
+    <div class="specimen-grid wide">
+
+      <!-- Buttons -->
+      <div class="specimen">
+        <p class="specimen-label">Buttons — intent × state</p>
+        <div class="row"><button class="btn primary">Primary</button><button class="btn secondary">Secondary</button><button class="btn ghost">Ghost</button><button class="btn danger">Destructive</button></div>
+        <div class="row"><button class="btn primary" disabled>Disabled</button><button class="btn primary is-loading">Sending</button></div>
+        <p class="specimen-note">Primary is the one commit action per surface. Secondary supports; ghost is for tertiary inline. Destructive is rare — destructive flow lives in chat.</p>
+      </div>
+
+      <!-- Fields -->
+      <div class="specimen">
+        <p class="specimen-label">Fields — state progression</p>
+        <div class="field"><label>Email — idle</label><input type="email" placeholder="you@restaurant.com"/></div>
+        <div class="field"><label>Email — filled + focused</label><input type="email" value="carlos@matrix.app" autofocus/></div>
+        <div class="field error"><label>Email — error</label><input type="email" value="carlos@matrix"/><span class="err">Add a domain, e.g. matrix.app</span></div>
+        <div class="field"><label>Email — disabled</label><input type="email" value="locked" disabled/></div>
+      </div>
+
+      <!-- Chips -->
+      <div class="specimen">
+        <p class="specimen-label">Chips — suggestion + metadata (no status variants)</p>
+        <div class="row"><span class="chip sugg">close early next Tuesday</span><span class="chip sugg">plan next week</span><span class="chip sugg">copy this day to next Sat</span></div>
+        <div class="row"><span class="chip">America/Chicago</span><span class="chip">Studio · Austin</span><span class="chip">Vestaboard Console</span></div>
+        <p class="specimen-note">Status chips (Live on board / Draft / Needs review / Paused) are explicitly cut — the only status surface is the live-dot.</p>
+      </div>
+
+      <!-- Nav items (4 destinations) -->
+      <div class="specimen">
+        <p class="specimen-label">Nav items — four destinations</p>
+        <div class="nav-item active"><span class="n-dot"></span>Boards</div>
+        <div class="nav-item"><span class="n-dot"></span>Library</div>
+        <div class="nav-item"><span class="n-dot"></span>Data sources</div>
+        <div class="nav-item"><span class="n-dot"></span>Settings</div>
+        <p class="specimen-note">Chat is not a nav destination — chat is the product. The composition view is the default surface you return to.</p>
+      </div>
+
+      <!-- Live-dot -->
+      <div class="specimen">
+        <p class="specimen-label">Live-dot — the only status primitive</p>
+        <div class="chat-head-demo"><span><span class="live-dot"></span> <strong style="color:var(--text-strong);font-weight:700">Studio</strong> <span style="color:var(--text-muted);font-size:12px">showing Saturday brunch</span></span><span class="rundown-demo">live</span></div>
+        <div class="chat-head-demo"><span><strong style="color:var(--text-strong);font-weight:700">Patio</strong> <span style="color:var(--text-muted);font-size:12px">idle</span></span></div>
+        <p class="specimen-note">Two states per screen, total: dot (live) or nothing. No "AIRED", "DRAFTED", "ON AIR", "HOLDING", "NEEDS YOU".</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 03 / Domain modules -->
+  <!-- ============================================================ -->
+  <section id="modules" class="artboard">
+    <header class="artboard-head">
+      <p class="eyebrow">03 / Domain modules</p>
+      <h2>Matrix-specific composed primitives</h2>
+    </header>
+    <div class="specimen-grid wide">
+
+      <!-- Board selector -->
+      <div class="specimen">
+        <p class="specimen-label">Board selector — inline in the chat-head</p>
+        <div class="chat-head-demo">
+          <button class="selector" type="button"><span class="live-dot"></span><strong>Studio</strong><span class="sep">·</span><span class="meta">Austin · CT</span><span class="caret"></span></button>
+          <span class="rundown-demo">Saturday 13:47</span>
+        </div>
+        <p class="specimen-note">Dropdown opens to switch boards or pair a new one. Live-dot reflects the selected board's live state.</p>
+      </div>
+
+      <!-- Chat messages -->
+      <div class="specimen">
+        <p class="specimen-label">Chat messages — user, agent, agent with artifact</p>
+        <div class="stream">
+          <div class="msg u">Make a three-screen reopening deck for Saturday. Warm, high-end, scannable from the street.</div>
+          <div class="msg a">Drafted a tighter direction: bold opener, offer, location close. Warm palette throughout.
+            <div class="artifact">
+              <div class="artifact-head"><span class="artifact-title">Saturday reopening</span><span class="live-dot"></span></div>
+              <div data-component="mini-vestaboard" data-preset="reopening" data-board-product="console" data-autoplay="false"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Composer -->
+      <div class="specimen">
+        <p class="specimen-label">Composer — textarea + suggestion pills + send</p>
+        <div class="composer">
+          <div class="composer-suggs"><span class="chip sugg">Make it more understated</span><span class="chip sugg">Shorten screen two</span><span class="chip sugg">Use blue instead</span></div>
+          <textarea>Refine the first screen so it feels more premium and less promotional.</textarea>
+          <div class="composer-foot"><span></span><button class="btn primary">Send to Matrix</button></div>
+        </div>
+      </div>
+
+      <!-- Board card -->
+      <div class="specimen">
+        <p class="specimen-label">Board card — Boards list entry</p>
+        <div class="bc">
+          <div class="bc-head"><span class="live-dot"></span><span class="bc-name">Studio</span><span class="bc-meta">Austin · CT</span></div>
+          <div class="bc-preview"><div data-component="mini-vestaboard" data-preset="brunch" data-board-product="console" data-autoplay="false"></div></div>
+          <div class="bc-footer">Showing Saturday brunch · until 14:30</div>
+        </div>
+      </div>
+
+      <!-- Board canvas -->
+      <div class="specimen">
+        <p class="specimen-label">Board canvas — paper rail anchor</p>
+        <div class="rail">
+          <div><p class="rail-eye">Live preview</p><h3>Saturday reopening</h3></div>
+          <div class="canvas-frame"><div data-component="mini-vestaboard" data-preset="reopening" data-board-product="flagship" data-autoplay="true"></div></div>
+          <div class="rail-note"><strong>Why this matters</strong>Right rail holds the preview and the agent's rationale. Actions happen in chat.</div>
+        </div>
+      </div>
+
+      <!-- Confirmation card -->
+      <div class="specimen">
+        <p class="specimen-label">Confirmation card — facts + confirm/edit</p>
+        <div class="confirm">
+          <p class="confirm-q">Show this Saturday 8am to 6pm on Studio?</p>
+          <div class="facts">
+            <div class="fact"><span class="fact-key">Screen</span><span class="fact-val">Saturday reopening</span></div>
+            <div class="fact"><span class="fact-key">Board</span><span class="fact-val">Studio · Austin</span></div>
+            <div class="fact"><span class="fact-key">When</span><span class="fact-val">Saturday Apr 25 · 08:00 – 18:00 CT</span></div>
+            <div class="fact"><span class="fact-key">Conflicts</span><span class="fact-val">None</span></div>
+          </div>
+          <div class="confirm-actions">
+            <button class="btn secondary">Edit</button>
+            <button class="btn primary">Confirm</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auth card -->
+      <div class="specimen">
+        <p class="specimen-label">Auth card — magic-link sign-in on paper</p>
+        <div class="rail" style="padding:28px 26px">
+          <div><p class="rail-eye">Sign in</p><h3>Run your board from a conversation.</h3></div>
+          <p style="margin:0;color:var(--text-dark-muted);font-size:13px;line-height:1.5">Matrix emails you a sign-in link. No password, no setup.</p>
+          <div class="field" style="color:var(--text-dark)"><label style="color:#655b48">Email</label><input type="email" placeholder="you@restaurant.com" style="background:rgba(255,255,255,0.4);border-color:rgba(33,25,17,0.18);color:var(--text-dark)"/></div>
+          <button class="btn primary" style="justify-self:start">Email my sign-in link</button>
+        </div>
+      </div>
+
+      <!-- What's next -->
+      <div class="specimen">
+        <p class="specimen-label">What's next — now + next list (replaces horizontal timeline)</p>
+        <div class="wn">
+          <div class="wn-row now"><span class="wn-time">Now</span><div class="wn-body"><div class="wn-text"><strong>Saturday brunch</strong><span class="sub">Studio · until 14:30</span></div><span class="live-dot"></span></div></div>
+          <div class="wn-row"><span class="wn-time">14:30</span><div class="wn-body"><div class="wn-text"><strong>Saturday reopening</strong><span class="sub">Studio · auto-flip</span></div></div></div>
+          <div class="wn-row"><span class="wn-time">18:00</span><div class="wn-body"><div class="wn-text"><strong>Evening calm mode</strong><span class="sub">Weather-driven · rotating</span></div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 04 / Composed surfaces -->
+  <!-- ============================================================ -->
+  <section id="surfaces" class="artboard">
+    <header class="artboard-head">
+      <p class="eyebrow">04 / Composed surfaces</p>
+      <h2>Product screens — the three Phase 8 surfaces</h2>
+    </header>
+    <div class="specimen-grid full">
+      <div class="specimen">
+        <p class="specimen-label">ui_kits/app/ — open full-page</p>
+        <div class="kit-links">
+          <a class="kit-link" href="./ui_kits/app/index.html#artboard-01">01 Composition workspace <span class="kit-sub">chat + canvas</span></a>
+          <a class="kit-link" href="./ui_kits/app/index.html#artboard-02">02 Sign in <span class="kit-sub">magic link</span></a>
+          <a class="kit-link" href="./ui_kits/app/index.html#artboard-03">03 Boards list <span class="kit-sub">paired + pair new</span></a>
+        </div>
+        <p class="specimen-note">Composed surfaces live in <span class="code">ui_kits/app/index.html</span>. The specimens above are the primitives they're built from — if a primitive fails there, it fails here.</p>
+      </div>
+    </div>
+  </section>
+
 </div>
 
-<div class="sheet" id="edit-sheet">
-  <div class="sheet-card">
-    <div class="sheet-head">
-      <h3>Saturday <em>reopening</em></h3>
-      <div class="sheet-when">14:30 · SAT 18 APR</div>
-    </div>
-    <div class="sheet-body">
-      <div>
-        <label>The three lines (22 chars each)</label>
-        <div class="line-row"><span class="ln">L1</span><input class="line-edit" value="REOPENING"/><span class="ct">9/22</span></div>
-        <div class="line-row"><span class="ln">L2</span><input class="line-edit" value="SATURDAY 8 AM"/><span class="ct">13/22</span></div>
-        <div class="line-row"><span class="ln">L3</span><input class="line-edit" value="CAFE + MARKET"/><span class="ct">13/22</span></div>
-      </div>
-      <div class="ask-agent">
-        <span class="glyph">m</span>
-        <input placeholder="or ask the agent · &ldquo;make it warmer · drop the brand&rdquo;"/>
-      </div>
-    </div>
-    <div class="sheet-meta">
-      <span>Drafted by agent · 11:42 · revision <b>3 of 3</b></span>
-      <span>Auto-flip at <b>14:30</b></span>
-    </div>
-    <div class="sheet-foot">
-      <div class="left">
-        <button class="btn del">Delete slot</button>
-        <button class="btn">Move time</button>
-      </div>
-      <div class="left">
-        <button class="btn" id="edit-cancel">Cancel</button>
-        <button class="btn primary">Save</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-(function(){
-  // Center strip on the live frame
-  const strip = document.getElementById('strip');
-  const live = strip && strip.querySelector('.frame.now');
-  if (strip && live){
-    requestAnimationFrame(()=>{
-      const target = live.offsetLeft - (strip.clientWidth/2) + (live.clientWidth/2);
-      strip.scrollLeft = Math.max(0, target);
+<script type="module">
+  import { bootDesignSystemPage } from './system/registry.js';
+  bootDesignSystemPage(document);
+  // Theme switcher active-state sync
+  const buttons = document.querySelectorAll('.theme-switcher button[data-theme-switch]');
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
     });
-  }
-  // Day click → just a visual select
-  document.querySelectorAll('.day').forEach(d => d.addEventListener('click', ()=>{
-    document.querySelectorAll('.day').forEach(x => x.classList.remove('sel'));
-    d.classList.add('sel');
-  }));
-  // Tab click
-  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', e => {
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
-    t.classList.add('on');
-  }));
-  // Frame click → open edit sheet
-  const sheet = document.getElementById('edit-sheet');
-  document.querySelectorAll('.frame').forEach(f => f.addEventListener('click', ()=>{
-    const title = f.dataset.edit || 'Edit';
-    const head = sheet.querySelector('.sheet-head h3');
-    head.innerHTML = title.replace(/(\w+)$/, '<em>$1</em>');
-    const when = f.querySelector('.frame-when b').textContent;
-    sheet.querySelector('.sheet-when').textContent = when + ' · SAT 18 APR';
-    sheet.classList.add('open');
-  }));
-  document.getElementById('edit-cancel').addEventListener('click', ()=> sheet.classList.remove('open'));
-  sheet.addEventListener('click', e => { if (e.target === sheet) sheet.classList.remove('open'); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') sheet.classList.remove('open'); });
-})();
+  });
 </script>
-
-<script>// ===== matrix-system.js (concatenated from system/*.js) =====
-
-(function(global){
-
-"use strict";
-
-// ---- system/themes.js ----
-
-const BASE_THEME_VARS = Object.freeze({
-  '--font-display':
-    '"Instrument Serif", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif',
-  '--font-sans':
-    '"Manrope", "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
-  '--font-mono':
-    '"IBM Plex Mono", "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", monospace',
-  '--radius-card': '28px',
-  '--radius-panel': '22px',
-  '--radius-control': '16px',
-  '--radius-pill': '999px',
-  '--space-1': '4px',
-  '--space-2': '8px',
-  '--space-3': '12px',
-  '--space-4': '16px',
-  '--space-5': '20px',
-  '--space-6': '24px',
-  '--space-7': '32px',
-  '--space-8': '40px',
-  '--space-9': '56px',
-  '--space-10': '72px',
-  '--text-xs': '12px',
-  '--text-sm': '14px',
-  '--text-md': '16px',
-  '--text-lg': '18px',
-  '--text-xl': '24px',
-  '--text-2xl': '34px',
-  '--text-3xl': '52px',
-  '--leading-tight': '1.05',
-  '--leading-snug': '1.2',
-  '--leading-normal': '1.5',
-  '--ease-standard': 'cubic-bezier(0.22, 1, 0.36, 1)',
-  '--speed-fast': '140ms',
-  '--speed-base': '220ms',
-  '--speed-slow': '520ms',
-  '--shadow-1': '0 18px 40px rgba(0, 0, 0, 0.22)',
-  '--shadow-2': '0 24px 72px rgba(0, 0, 0, 0.34)',
-  '--shadow-inset': 'inset 0 1px 0 rgba(255, 255, 255, 0.03)',
-  '--board-shell': '#1f1f1d',
-  '--board-rim': '#2d2d29',
-  '--board-face': '#080808',
-  '--board-grid-line': 'rgba(255, 248, 231, 0.03)',
-  '--board-cell-shell': '#101010',
-  '--board-cell-edge': 'rgba(255, 255, 255, 0.018)',
-  '--board-disc-empty': '#050505',
-  '--board-disc-ghost': '#151515',
-  '--board-disc-text': '#0b0b0b',
-  '--board-disc-shadow': 'rgba(0, 0, 0, 0.35)',
-  '--board-sheen': 'rgba(255, 255, 255, 0.09)',
-  '--swoosh-strong': 'rgba(255, 255, 255, 0.03)',
-  '--swoosh-soft': 'rgba(255, 255, 255, 0.015)',
-  '--board-glyph': '#fffdf7',
-  '--board-seam': 'rgba(255, 255, 255, 0.075)',
-  '--line-soft': 'rgba(244, 234, 211, 0.08)',
-  '--line-medium': 'rgba(244, 234, 211, 0.16)',
-  '--line-strong': 'rgba(25, 31, 26, 0.12)',
-})
-
-const MATRIX_THEMES = Object.freeze({
-  editorialControlRoom: {
-    key: 'editorial-control-room',
-    label: 'Editorial Control Room',
-    description: 'Warm dark shell, paper inserts, ember signals, restrained serif.',
-    cssVars: {
-      ...BASE_THEME_VARS,
-      '--bg-app': '#0e110e',
-      '--bg-shell': '#131813',
-      '--bg-panel': '#1b211b',
-      '--bg-panel-2': '#202821',
-      '--bg-panel-3': '#252f27',
-      '--bg-paper': '#f2ead7',
-      '--bg-paper-2': '#e5dbc1',
-      '--text-strong': '#f7efd9',
-      '--text-body': '#ddd3bb',
-      '--text-muted': '#a89f8d',
-      '--text-dark': '#241f16',
-      '--text-dark-muted': '#655b48',
-      '--accent-ember': '#ff6a2a',
-      '--accent-ember-strong': '#ff4d00',
-      '--accent-cobalt': '#5a78ff',
-      '--accent-citron': '#c7d654',
-      '--accent-sand': '#d6b970',
-      '--accent-danger': '#d56156',
-      '--accent-success': '#6eb081',
-      '--button-primary-ink': '#180f0a',
-      '--button-primary-from': '#ff8b55',
-      '--button-primary-to': '#ff6a2a',
-      '--button-primary-shadow': 'rgba(255, 106, 42, 0.2)',
-    },
-  },
-  signalAtelier: {
-    key: 'signal-atelier',
-    label: 'Signal Atelier',
-    description: 'Cooler steel shell, sharper cobalt motion, clearer instrument feel.',
-    cssVars: {
-      ...BASE_THEME_VARS,
-      '--bg-app': '#0d1016',
-      '--bg-shell': '#121824',
-      '--bg-panel': '#182030',
-      '--bg-panel-2': '#1d2940',
-      '--bg-panel-3': '#253251',
-      '--bg-paper': '#e9e5dd',
-      '--bg-paper-2': '#dad5ca',
-      '--text-strong': '#edf2ff',
-      '--text-body': '#ced7ed',
-      '--text-muted': '#8f9bb7',
-      '--text-dark': '#1f2430',
-      '--text-dark-muted': '#5d6679',
-      '--accent-ember': '#ff7b43',
-      '--accent-ember-strong': '#f55419',
-      '--accent-cobalt': '#6c8cff',
-      '--accent-citron': '#b8d95c',
-      '--accent-sand': '#d8c493',
-      '--accent-danger': '#dc6d66',
-      '--accent-success': '#74bb98',
-      '--button-primary-ink': '#11131a',
-      '--button-primary-from': '#83a1ff',
-      '--button-primary-to': '#5a78ff',
-      '--button-primary-shadow': 'rgba(90, 120, 255, 0.24)',
-      '--board-shell': '#1d1f22',
-      '--board-rim': '#2b2f35',
-      '--board-face': '#080808',
-      '--board-cell-shell': '#101113',
-    },
-  },
-  amberBroadcast: {
-    key: 'amber-broadcast',
-    label: 'Amber Broadcast',
-    description: 'Warmer brass shell, broadcast-like contrast, richer highlights.',
-    cssVars: {
-      ...BASE_THEME_VARS,
-      '--bg-app': '#15110d',
-      '--bg-shell': '#1b1511',
-      '--bg-panel': '#261d18',
-      '--bg-panel-2': '#30241d',
-      '--bg-panel-3': '#3a2d24',
-      '--bg-paper': '#f0e2ca',
-      '--bg-paper-2': '#e2d0b2',
-      '--text-strong': '#fff1dd',
-      '--text-body': '#e5cfb7',
-      '--text-muted': '#b3977f',
-      '--text-dark': '#281d14',
-      '--text-dark-muted': '#6f5644',
-      '--accent-ember': '#ff7a30',
-      '--accent-ember-strong': '#ff5f12',
-      '--accent-cobalt': '#6484ff',
-      '--accent-citron': '#d4cf67',
-      '--accent-sand': '#e0b56c',
-      '--accent-danger': '#dd7265',
-      '--accent-success': '#82b374',
-      '--button-primary-ink': '#1f1209',
-      '--button-primary-from': '#ff9a58',
-      '--button-primary-to': '#ff6b1f',
-      '--button-primary-shadow': 'rgba(255, 122, 48, 0.24)',
-      '--board-shell': '#2a221a',
-      '--board-rim': '#3d3124',
-      '--board-face': '#080808',
-      '--board-cell-shell': '#100e0d',
-    },
-  },
-})
-
-const THEME_STYLE_ID = 'matrix-ds-theme-vars'
-
-function getThemeStyleTag(doc) {
-  let tag = doc.getElementById(THEME_STYLE_ID)
-  if (!tag) {
-    tag = doc.createElement('style')
-    tag.id = THEME_STYLE_ID
-    doc.head.append(tag)
-  }
-  return tag
-}
-
-function getTheme(themeKey = 'editorialControlRoom') {
-  return MATRIX_THEMES[themeKey] ?? MATRIX_THEMES.editorialControlRoom
-}
-
-function applyTheme(themeKey = 'editorialControlRoom', doc = document) {
-  const theme = getTheme(themeKey)
-  const tag = getThemeStyleTag(doc)
-  const vars = Object.entries(theme.cssVars)
-    .map(([name, value]) => `  ${name}: ${value};`)
-    .join('\n')
-  tag.textContent = `:root {\n${vars}\n}`
-  doc.documentElement.dataset.matrixTheme = theme.key
-  return theme
-}
-
-function attachThemeSwitches(root = document, onChange) {
-  root.querySelectorAll('[data-theme-switch]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const themeKey = button.getAttribute('data-theme-switch') ?? 'editorialControlRoom'
-      const theme = applyTheme(themeKey, root.ownerDocument ?? document)
-      if (typeof onChange === 'function') onChange(theme)
-    })
-  })
-}
-
-
-// ---- system/button-system.js ----
-
-const BUTTON_SPECS = Object.freeze({
-  primary: {
-    label: 'Primary',
-    description: 'Commit action with the strongest visual priority.',
-  },
-  secondary: {
-    label: 'Secondary',
-    description: 'Support action with clear but quieter emphasis.',
-  },
-  ghost: {
-    label: 'Ghost',
-    description: 'Low-emphasis action for secondary exploration.',
-  },
-  danger: {
-    label: 'Danger',
-    description: 'Destructive action that stays contained.',
-  },
-})
-
-const BUTTON_STYLE_ID = 'matrix-ds-buttons'
-
-function ensureButtonStyles(doc = document) {
-  if (doc.getElementById(BUTTON_STYLE_ID)) return
-  const style = doc.createElement('style')
-  style.id = BUTTON_STYLE_ID
-  style.textContent = `
-    .button[data-ui-button] {
-      position: relative;
-      isolation: isolate;
-      overflow: hidden;
-      appearance: none;
-      border: 1px solid transparent;
-      border-radius: var(--radius-control);
-      padding: 14px 18px;
-      min-height: 48px;
-      font: inherit;
-      font-weight: 800;
-      letter-spacing: -0.01em;
-      transition:
-        transform var(--speed-fast) var(--ease-standard),
-        border-color var(--speed-base) var(--ease-standard),
-        box-shadow var(--speed-base) var(--ease-standard),
-        background var(--speed-base) var(--ease-standard),
-        color var(--speed-base) var(--ease-standard);
-    }
-
-    .button[data-ui-button]::before {
-      content: "";
-      position: absolute;
-      inset: 1px;
-      border-radius: calc(var(--radius-control) - 1px);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.11), transparent 42%);
-      opacity: 0.9;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .button[data-ui-button]::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: -32%;
-      width: 32%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
-      transform: skewX(-18deg);
-      opacity: 0;
-      transition:
-        left var(--speed-slow) var(--ease-standard),
-        opacity var(--speed-base) var(--ease-standard);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .button[data-ui-button] > span {
-      position: relative;
-      z-index: 1;
-    }
-
-    .button[data-ui-button]:hover {
-      transform: translateY(-1px);
-    }
-
-    .button[data-ui-button]:hover::after,
-    .button[data-ui-button]:focus-visible::after {
-      left: 116%;
-      opacity: 1;
-    }
-
-    .button[data-ui-button]:focus-visible {
-      outline: none;
-      box-shadow: 0 0 0 4px rgba(90, 120, 255, 0.16);
-    }
-
-    .button[data-ui-button="primary"] {
-      color: var(--button-primary-ink);
-      background: linear-gradient(180deg, var(--button-primary-from), var(--button-primary-to));
-      box-shadow: 0 14px 28px var(--button-primary-shadow);
-    }
-
-    .button[data-ui-button="secondary"] {
-      color: var(--text-strong);
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
-        rgba(255, 255, 255, 0.03);
-      border-color: var(--line-medium);
-      box-shadow: var(--shadow-inset);
-    }
-
-    .button[data-ui-button="ghost"] {
-      color: var(--text-body);
-      background: transparent;
-      border-color: rgba(255, 255, 255, 0.02);
-    }
-
-    .button[data-ui-button="ghost"]::before {
-      opacity: 0.3;
-    }
-
-    .button[data-ui-button="danger"] {
-      color: #fff0ed;
-      background:
-        linear-gradient(180deg, rgba(221, 114, 101, 0.2), rgba(213, 97, 86, 0.12)),
-        rgba(213, 97, 86, 0.08);
-      border-color: rgba(213, 97, 86, 0.34);
-    }
-  `
-  doc.head.append(style)
-}
-
-function inferVariant(button) {
-  if (button.dataset.uiButton) return button.dataset.uiButton
-  if (button.classList.contains('primary')) return 'primary'
-  if (button.classList.contains('danger')) return 'danger'
-  if (button.classList.contains('ghost')) return 'ghost'
-  return 'secondary'
-}
-
-function createButton({ label, variant = 'secondary', attrs = {} }, doc = document) {
-  ensureButtonStyles(doc)
-  const button = doc.createElement('button')
-  button.type = 'button'
-  button.className = 'button'
-  button.dataset.uiButton = variant
-  Object.entries(attrs).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) button.setAttribute(key, String(value))
-  })
-  button.innerHTML = `<span>${label}</span>`
-  return button
-}
-
-function hydrateButtons(root = document) {
-  ensureButtonStyles(root.ownerDocument ?? document)
-  root.querySelectorAll('button.button, button[data-ui-button]').forEach((button) => {
-    const variant = inferVariant(button)
-    button.dataset.uiButton = variant
-    if (!button.querySelector('span')) {
-      const label = button.textContent ?? ''
-      button.textContent = ''
-      const span = (root.ownerDocument ?? document).createElement('span')
-      span.textContent = label.trim()
-      button.append(span)
-    }
-  })
-}
-
-
-// ---- system/vestaboard-glyphs.js ----
-
-const GLYPH_COLS = 7
-const GLYPH_ROWS = 8
-const CELL_SIZE = 10
-const GLYPH_INSET_X = 0.6
-const GLYPH_INSET_Y = 0.58
-const GLYPH_VIEWBOX_WIDTH = GLYPH_COLS * CELL_SIZE
-const GLYPH_VIEWBOX_HEIGHT = GLYPH_ROWS * CELL_SIZE
-const DEFAULT_EDGE_METRIC = Object.freeze({ left: 0.14, right: 0.14 })
-
-function defineGlyph(rows) {
-  return rows.map((row) => row.replace(/[^01]/g, '0').padEnd(GLYPH_COLS, '0').slice(0, GLYPH_COLS))
-}
-
-const GLYPH_BITMAPS = Object.freeze({
-  A: defineGlyph([
-    '0011100',
-    '0100010',
-    '1000001',
-    '1111111',
-    '1000001',
-    '1000001',
-    '1000001',
-    '0000000',
-  ]),
-  B: defineGlyph([
-    '1111100',
-    '1000010',
-    '1000010',
-    '1111100',
-    '1000010',
-    '1000010',
-    '1111100',
-    '0000000',
-  ]),
-  C: defineGlyph([
-    '0011110',
-    '0100001',
-    '1000000',
-    '1000000',
-    '1000000',
-    '0100001',
-    '0011110',
-    '0000000',
-  ]),
-  D: defineGlyph([
-    '1111100',
-    '1000010',
-    '1000001',
-    '1000001',
-    '1000001',
-    '1000010',
-    '1111100',
-    '0000000',
-  ]),
-  E: defineGlyph([
-    '1111111',
-    '1000000',
-    '1000000',
-    '1111100',
-    '1000000',
-    '1000000',
-    '1111111',
-    '0000000',
-  ]),
-  F: defineGlyph([
-    '1111111',
-    '1000000',
-    '1000000',
-    '1111100',
-    '1000000',
-    '1000000',
-    '1000000',
-    '0000000',
-  ]),
-  G: defineGlyph([
-    '0011110',
-    '0100001',
-    '1000000',
-    '1001111',
-    '1000001',
-    '0100001',
-    '0011110',
-    '0000000',
-  ]),
-  H: defineGlyph([
-    '1000001',
-    '1000001',
-    '1000001',
-    '1111111',
-    '1000001',
-    '1000001',
-    '1000001',
-    '0000000',
-  ]),
-  I: defineGlyph([
-    '0111110',
-    '0001000',
-    '0001000',
-    '0001000',
-    '0001000',
-    '0001000',
-    '0111110',
-    '0000000',
-  ]),
-  J: defineGlyph([
-    '0001111',
-    '0000010',
-    '0000010',
-    '0000010',
-    '0000010',
-    '1000010',
-    '0111100',
-    '0000000',
-  ]),
-  K: defineGlyph([
-    '1000001',
-    '1000010',
-    '1000100',
-    '1111000',
-    '1000100',
-    '1000010',
-    '1000001',
-    '0000000',
-  ]),
-  L: defineGlyph([
-    '1000000',
-    '1000000',
-    '1000000',
-    '1000000',
-    '1000000',
-    '1000000',
-    '1111111',
-    '0000000',
-  ]),
-  M: defineGlyph([
-    '1000001',
-    '1100011',
-    '1010101',
-    '1001001',
-    '1000001',
-    '1000001',
-    '1000001',
-    '0000000',
-  ]),
-  N: defineGlyph([
-    '1000001',
-    '1100001',
-    '1010001',
-    '1001001',
-    '1000101',
-    '1000011',
-    '1000001',
-    '0000000',
-  ]),
-  O: defineGlyph([
-    '0011100',
-    '0100010',
-    '1000001',
-    '1000001',
-    '1000001',
-    '0100010',
-    '0011100',
-    '0000000',
-  ]),
-  P: defineGlyph([
-    '1111100',
-    '1000010',
-    '1000001',
-    '1111110',
-    '1000000',
-    '1000000',
-    '1000000',
-    '0000000',
-  ]),
-  Q: defineGlyph([
-    '0011100',
-    '0100010',
-    '1000001',
-    '1000001',
-    '1001001',
-    '0100010',
-    '0011101',
-    '0000000',
-  ]),
-  R: defineGlyph([
-    '1111100',
-    '1000010',
-    '1000001',
-    '1111110',
-    '1000100',
-    '1000010',
-    '1000001',
-    '0000000',
-  ]),
-  S: defineGlyph([
-    '0111110',
-    '1000001',
-    '1000000',
-    '0111110',
-    '0000001',
-    '1000001',
-    '0111110',
-    '0000000',
-  ]),
-  T: defineGlyph([
-    '1111111',
-    '0001000',
-    '0001000',
-    '0001000',
-    '0001000',
-    '0001000',
-    '0001000',
-    '0000000',
-  ]),
-  U: defineGlyph([
-    '1000001',
-    '1000001',
-    '1000001',
-    '1000001',
-    '1000001',
-    '0100010',
-    '0011100',
-    '0000000',
-  ]),
-  V: defineGlyph([
-    '1000001',
-    '1000001',
-    '1000001',
-    '1000001',
-    '0100010',
-    '0010100',
-    '0001000',
-    '0000000',
-  ]),
-  W: defineGlyph([
-    '1000001',
-    '1000001',
-    '1000001',
-    '1001001',
-    '1001001',
-    '1010101',
-    '0100010',
-    '0000000',
-  ]),
-  X: defineGlyph([
-    '1000001',
-    '0100010',
-    '0010100',
-    '0001000',
-    '0010100',
-    '0100010',
-    '1000001',
-    '0000000',
-  ]),
-  Y: defineGlyph([
-    '1000001',
-    '0100010',
-    '0010100',
-    '0001000',
-    '0001000',
-    '0001000',
-    '0001000',
-    '0000000',
-  ]),
-  Z: defineGlyph([
-    '1111111',
-    '0000010',
-    '0000100',
-    '0001000',
-    '0010000',
-    '0100000',
-    '1111111',
-    '0000000',
-  ]),
-  0: defineGlyph([
-    '0011100',
-    '0100010',
-    '1000011',
-    '1001001',
-    '1010001',
-    '0100010',
-    '0011100',
-    '0000000',
-  ]),
-  1: defineGlyph([
-    '0001000',
-    '0011000',
-    '0101000',
-    '0001000',
-    '0001000',
-    '0001000',
-    '0111110',
-    '0000000',
-  ]),
-  2: defineGlyph([
-    '0011110',
-    '0100001',
-    '0000001',
-    '0000110',
-    '0011000',
-    '0100000',
-    '1111111',
-    '0000000',
-  ]),
-  3: defineGlyph([
-    '0111110',
-    '1000001',
-    '0000001',
-    '0001110',
-    '0000001',
-    '1000001',
-    '0111110',
-    '0000000',
-  ]),
-  4: defineGlyph([
-    '0000110',
-    '0001010',
-    '0010010',
-    '0100010',
-    '1111111',
-    '0000010',
-    '0000010',
-    '0000000',
-  ]),
-  5: defineGlyph([
-    '1111111',
-    '1000000',
-    '1111110',
-    '0000001',
-    '0000001',
-    '1000001',
-    '0111110',
-    '0000000',
-  ]),
-  6: defineGlyph([
-    '0011110',
-    '0100000',
-    '1000000',
-    '1111110',
-    '1000001',
-    '0100001',
-    '0011110',
-    '0000000',
-  ]),
-  7: defineGlyph([
-    '1111111',
-    '0000001',
-    '0000010',
-    '0000100',
-    '0001000',
-    '0010000',
-    '0010000',
-    '0000000',
-  ]),
-  8: defineGlyph([
-    '0011110',
-    '0100001',
-    '0100001',
-    '0011110',
-    '0100001',
-    '0100001',
-    '0011110',
-    '0000000',
-  ]),
-  9: defineGlyph([
-    '0011110',
-    '0100001',
-    '1000001',
-    '0111111',
-    '0000001',
-    '0000010',
-    '0111100',
-    '0000000',
-  ]),
-  '!': defineGlyph([
-    '0001000',
-    '0001000',
-    '0001000',
-    '0001000',
-    '0001000',
-    '0000000',
-    '0001000',
-    '0000000',
-  ]),
-  '"': defineGlyph([
-    '0101010',
-    '0101010',
-    '0010100',
-    '0000000',
-    '0000000',
-    '0000000',
-    '0000000',
-    '0000000',
-  ]),
-  '%': defineGlyph([
-    '1100001',
-    '1100010',
-    '0000100',
-    '0001000',
-    '0010000',
-    '0100011',
-    '1000011',
-    '0000000',
-  ]),
-  '&': defineGlyph([
-    '0011000',
-    '0100100',
-    '0010000',
-    '0110100',
-    '1001000',
-    '1001010',
-    '0110101',
-    '0000000',
-  ]),
-  "'": defineGlyph([
-    '0001000',
-    '0001000',
-    '0010000',
-    '0000000',
-    '0000000',
-    '0000000',
-    '0000000',
-    '0000000',
-  ]),
-  '(': defineGlyph([
-    '0000110',
-    '0001000',
-    '0010000',
-    '0010000',
-    '0010000',
-    '0001000',
-    '0000110',
-    '0000000',
-  ]),
-  ')': defineGlyph([
-    '0110000',
-    '0001000',
-    '0000100',
-    '0000100',
-    '0000100',
-    '0001000',
-    '0110000',
-    '0000000',
-  ]),
-  '+': defineGlyph([
-    '0000000',
-    '0001000',
-    '0001000',
-    '1111111',
-    '0001000',
-    '0001000',
-    '0000000',
-    '0000000',
-  ]),
-  ',': defineGlyph([
-    '0000000',
-    '0000000',
-    '0000000',
-    '0000000',
-    '0000000',
-    '0001000',
-    '0001000',
-    '0010000',
-  ]),
-  '-': defineGlyph([
-    '0000000',
-    '0000000',
-    '0000000',
-    '1111111',
-    '0000000',
-    '0000000',
-    '0000000',
-    '0000000',
-  ]),
-  '.': defineGlyph([
-    '0000000',
-    '0000000',
-    '0000000',
-    '0000000',
-    '0000000',
-    '0000000',
-    '0001000',
-    '0001000',
-  ]),
-  '/': defineGlyph([
-    '0000001',
-    '0000010',
-    '0000100',
-    '0001000',
-    '0010000',
-    '0100000',
-    '1000000',
-    '0000000',
-  ]),
-  ':': defineGlyph([
-    '0000000',
-    '0001000',
-    '0001000',
-    '0000000',
-    '0000000',
-    '0001000',
-    '0001000',
-    '0000000',
-  ]),
-  ';': defineGlyph([
-    '0000000',
-    '0001000',
-    '0001000',
-    '0000000',
-    '0000000',
-    '0001000',
-    '0001000',
-    '0010000',
-  ]),
-  '?': defineGlyph([
-    '0011110',
-    '0100001',
-    '0000001',
-    '0000110',
-    '0001000',
-    '0000000',
-    '0001000',
-    '0000000',
-  ]),
-  '@': defineGlyph([
-    '0011110',
-    '0100001',
-    '1001111',
-    '1010101',
-    '1011101',
-    '1000000',
-    '0111110',
-    '0000000',
-  ]),
-  '#': defineGlyph([
-    '0101010',
-    '1111111',
-    '0101010',
-    '0101010',
-    '1111111',
-    '0101010',
-    '0101010',
-    '0000000',
-  ]),
-  '$': defineGlyph([
-    '0001000',
-    '0111110',
-    '1001000',
-    '0111110',
-    '0001001',
-    '0111110',
-    '0001000',
-    '0000000',
-  ]),
-  '=': defineGlyph([
-    '0000000',
-    '1111111',
-    '0000000',
-    '0000000',
-    '1111111',
-    '0000000',
-    '0000000',
-    '0000000',
-  ]),
-  '°': defineGlyph([
-    '0011000',
-    '0100100',
-    '0100100',
-    '0011000',
-    '0000000',
-    '0000000',
-    '0000000',
-    '0000000',
-  ]),
-})
-
-function rectPath(x, y, width, height) {
-  const x2 = x + width
-  const y2 = y + height
-  return `M${x} ${y}H${x2}V${y2}H${x}Z`
-}
-
-function bitmapToPath(rows) {
-  let path = ''
-
-  for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-    const row = rows[rowIndex]
-    let runStart = -1
-
-    for (let colIndex = 0; colIndex <= row.length; colIndex++) {
-      const isFilled = colIndex < row.length && row[colIndex] === '1'
-      if (isFilled && runStart === -1) {
-        runStart = colIndex
-        continue
-      }
-      if (isFilled || runStart === -1) continue
-
-      const x = runStart * CELL_SIZE + GLYPH_INSET_X
-      const y = rowIndex * CELL_SIZE + GLYPH_INSET_Y
-      const width = (colIndex - runStart) * CELL_SIZE - GLYPH_INSET_X * 2
-      const height = CELL_SIZE - GLYPH_INSET_Y * 2
-      path += rectPath(x, y, width, height)
-      runStart = -1
-    }
-  }
-
-  return path
-}
-
-function computeEdgeMetric(rows) {
-  let first = GLYPH_COLS
-  let last = -1
-
-  for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-    const row = rows[rowIndex]
-    for (let colIndex = 0; colIndex < row.length; colIndex++) {
-      if (row[colIndex] !== '1') continue
-      first = Math.min(first, colIndex)
-      last = Math.max(last, colIndex)
-    }
-  }
-
-  if (last === -1) return DEFAULT_EDGE_METRIC
-  return Object.freeze({
-    left: first / GLYPH_COLS,
-    right: (GLYPH_COLS - 1 - last) / GLYPH_COLS,
-  })
-}
-
-const BOARD_GLYPH_VIEWBOX = `0 0 ${GLYPH_VIEWBOX_WIDTH} ${GLYPH_VIEWBOX_HEIGHT}`
-
-const BOARD_GLYPH_PATHS = Object.freeze(
-  Object.fromEntries(
-    Object.entries(GLYPH_BITMAPS).map(([char, rows]) => [char, bitmapToPath(rows)]),
-  ),
-)
-
-const BOARD_GLYPH_EDGE_METRICS = Object.freeze(
-  Object.fromEntries(
-    Object.entries(GLYPH_BITMAPS).map(([char, rows]) => [char, computeEdgeMetric(rows)]),
-  ),
-)
-
-function getBoardGlyphPath(char) {
-  return BOARD_GLYPH_PATHS[char] ?? ''
-}
-
-function getBoardGlyphEdgeMetric(char) {
-  return BOARD_GLYPH_EDGE_METRICS[char] ?? DEFAULT_EDGE_METRIC
-}
-
-function getOpticalCenteredStart(chars, {
-  contentStart = 2,
-  contentCols = 18,
-} = {}) {
-  if (chars.length === 0) return contentStart + Math.floor(contentCols / 2)
-  const first = getBoardGlyphEdgeMetric(chars[0])
-  const last = getBoardGlyphEdgeMetric(chars[chars.length - 1])
-  const visualWidth = Math.max(1, chars.length - first.left - last.right)
-  const centeredStart = contentStart + (contentCols - visualWidth) / 2 - first.left
-  return Math.round(centeredStart)
-}
-
-
-// ---- system/vestaboard-rendering.js ----
-
-
-
-const GRID_ROWS = 6
-const GRID_COLS = 22
-const CELL_COUNT = GRID_ROWS * GRID_COLS
-const FULL_CONTENT_START = 0
-const FULL_CONTENT_COLS = GRID_COLS
-const BORDER_CONTENT_START = 2
-const BORDER_CONTENT_COLS = 18
-const DEMO_STYLE_ID = 'matrix-ds-vestaboard'
-const PREFILL_HOLD_MS = 96
-const STREAM_INTERVAL_MS = 14
-const FLIP_RESET_MS = 460
-
-const BOARD_RENDER_PRODUCTS = Object.freeze({
-  flagship: Object.freeze({
-    key: 'flagship',
-    label: 'Flagship Wallboard',
-    description: 'Full-size hero renderer with room-readable proportions.',
-    shellPaddingPx: 8,
-    facePaddingPx: 8,
-    gridGapPx: 2,
-    cellRadiusPx: 2,
-    discRadiusPx: 1,
-    discWidthPct: 86,
-    discHeightPct: 82,
-    glyphRatio: 0.62,
-    minFontPx: 12,
-    maxFontPx: 20,
-    fontWeight: 770,
-    glyphScaleX: 1.01,
-    glyphBoxWidthPct: 90,
-    glyphBoxHeightPct: 94,
-    glyphShiftYPct: 3.8,
-  }),
-  console: Object.freeze({
-    key: 'console',
-    label: 'Console Preview',
-    description: 'Mid-size board for chat previews and rail surfaces.',
-    shellPaddingPx: 1,
-    facePaddingPx: 1,
-    gridGapPx: 0.5,
-    cellRadiusPx: 2,
-    discRadiusPx: 1,
-    discWidthPct: 97,
-    discHeightPct: 94,
-    glyphRatio: 1.08,
-    minFontPx: 13,
-    maxFontPx: 20,
-    fontWeight: 785,
-    glyphScaleX: 1.03,
-    glyphBoxWidthPct: 99,
-    glyphBoxHeightPct: 100,
-    glyphShiftYPct: 2.2,
-  }),
-  tile: Object.freeze({
-    key: 'tile',
-    label: 'Signal Tile',
-    description: 'Compact card board with a larger glyph-to-flap ratio.',
-    shellPaddingPx: 1,
-    facePaddingPx: 1,
-    gridGapPx: 0,
-    cellRadiusPx: 1,
-    discRadiusPx: 1,
-    discWidthPct: 99,
-    discHeightPct: 96,
-    glyphRatio: 1.18,
-    minFontPx: 14,
-    maxFontPx: 19,
-    fontWeight: 800,
-    glyphScaleX: 1.05,
-    glyphBoxWidthPct: 100,
-    glyphBoxHeightPct: 100,
-    glyphShiftYPct: 2,
-  }),
-})
-
-const CHAR_TO_CODE = Object.freeze({
-  ' ': 0,
-  A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8, I: 9, J: 10,
-  K: 11, L: 12, M: 13, N: 14, O: 15, P: 16, Q: 17, R: 18, S: 19, T: 20,
-  U: 21, V: 22, W: 23, X: 24, Y: 25, Z: 26,
-  1: 27, 2: 28, 3: 29, 4: 30, 5: 31, 6: 32, 7: 33, 8: 34, 9: 35, 0: 36,
-  '!': 37, '@': 38, '#': 39, '$': 40, '(': 41, ')': 42,
-  '-': 44, '+': 46, '&': 47, '=': 48, ';': 49, ':': 50,
-  "'": 52, '"': 53, '%': 54, ',': 55, '.': 56, '/': 59, '?': 60, '°': 62,
-})
-
-const CODE_TO_CHAR = Object.freeze(
-  Object.fromEntries(Object.entries(CHAR_TO_CODE).map(([key, value]) => [value, key])),
-)
-
-const TILE_CODE_TO_COLOR = Object.freeze({
-  63: '#ff4136',
-  64: '#ff851b',
-  65: '#ffdc00',
-  66: '#2ecc40',
-  67: '#0074d9',
-  68: '#b10dc9',
-  69: '#ffffff',
-})
-
-function createEmptyMatrix() {
-  return Array.from({ length: GRID_ROWS }, () => Array(GRID_COLS).fill(0))
-}
-
-function cloneMatrix(matrix) {
-  return matrix.map((row) => [...row])
-}
-
-function encodeText(text, maxLength) {
-  return Array.from(
-    text
-      .normalize('NFC')
-      .toLocaleUpperCase('en-US')
-      .replace(/[\u2018\u2019]/g, "'")
-      .replace(/[\u201C\u201D]/g, '"')
-      .replace(/[\u2013\u2014]/g, '-')
-      .slice(0, maxLength),
-  )
-}
-
-function writeCenteredLine(matrix, row, lineSpec, {
-  contentStart = FULL_CONTENT_START,
-  contentCols = FULL_CONTENT_COLS,
-} = {}) {
-  const rawText = typeof lineSpec === 'string' ? lineSpec : lineSpec?.text ?? ''
-  const offsetCols = typeof lineSpec === 'string' ? 0 : lineSpec?.offsetCols ?? 0
-  const chars = encodeText(rawText, contentCols)
-  const baseStart = getOpticalCenteredStart(chars, {
-    contentStart,
-    contentCols,
-  })
-  const start = Math.min(
-    contentStart + contentCols - chars.length,
-    Math.max(contentStart, baseStart + offsetCols),
-  )
-  chars.forEach((char, index) => {
-    matrix[row][start + index] = CHAR_TO_CODE[char] ?? 0
-  })
-}
-
-function writeCenteredCodes(matrix, row, codes, {
-  contentStart = FULL_CONTENT_START,
-  contentCols = FULL_CONTENT_COLS,
-} = {}) {
-  const safeCodes = codes.slice(0, contentCols)
-  const start = contentStart + Math.max(0, Math.floor((contentCols - safeCodes.length) / 2))
-  safeCodes.forEach((code, index) => {
-    matrix[row][start + index] = code ?? 0
-  })
-}
-
-function resolveLineRows(lineCount, borderStyle) {
-  const clampedCount = Math.min(lineCount, borderStyle === 'none' ? GRID_ROWS : 4)
-  if (borderStyle !== 'none') return [1, 2, 3, 4].slice(0, clampedCount)
-  const startRow = Math.floor((GRID_ROWS - clampedCount) / 2)
-  return Array.from({ length: clampedCount }, (_, index) => startRow + index)
-}
-
-function perimeterCells() {
-  const cells = []
-  for (let c = 0; c < GRID_COLS; c++) cells.push([0, c])
-  for (let r = 1; r < GRID_ROWS - 1; r++) cells.push([r, GRID_COLS - 1])
-  for (let c = GRID_COLS - 1; c >= 0; c--) cells.push([GRID_ROWS - 1, c])
-  for (let r = GRID_ROWS - 2; r >= 1; r--) cells.push([r, 0])
-  return cells
-}
-
-function applyBorder(matrix, colors = [64, 69], style = 'alternating') {
-  if (style === 'none') return matrix
-  const cells = perimeterCells()
-  if (style === 'solid') {
-    const code = colors[0] ?? 64
-    cells.forEach(([r, c]) => {
-      matrix[r][c] = code
-    })
-    return matrix
-  }
-  cells.forEach(([r, c], index) => {
-    matrix[r][c] = colors[index % colors.length] ?? colors[0] ?? 64
-  })
-  return matrix
-}
-
-function buildPresetMatrix({
-  lines,
-  borderStyle = 'none',
-  borderCodes = [],
-  contentStart = borderStyle === 'none' ? FULL_CONTENT_START : BORDER_CONTENT_START,
-  contentCols = borderStyle === 'none' ? FULL_CONTENT_COLS : BORDER_CONTENT_COLS,
-}) {
-  const matrix = createEmptyMatrix()
-  if (borderStyle !== 'none' && borderCodes.length > 0) {
-    applyBorder(matrix, borderCodes, borderStyle)
-  }
-  const lineRows = resolveLineRows(lines.length, borderStyle)
-  lines.slice(0, lineRows.length).forEach((line, index) => {
-    writeCenteredLine(matrix, lineRows[index], line, { contentStart, contentCols })
-  })
-  return matrix
-}
-
-function buildColorShowcaseMatrix() {
-  const matrix = createEmptyMatrix()
-  writeCenteredCodes(matrix, 0, [63, 63, 64, 64, 65, 65, 66, 66, 67, 67, 68, 68, 69, 69])
-  writeCenteredLine(matrix, 1, 'RED ORANGE YELLOW')
-  writeCenteredCodes(matrix, 2, [63, 64, 65, 66, 67, 68, 69])
-  writeCenteredLine(matrix, 3, 'GREEN BLUE VIOLET')
-  writeCenteredCodes(matrix, 4, [69, 69, 69, 69, 69])
-  writeCenteredLine(matrix, 5, 'WHITE')
-  return matrix
-}
-
-const MATRIX_PRESETS = Object.freeze({
-  reopening: buildPresetMatrix({
-    lines: ['REOPENING', 'SATURDAY 8 AM', 'CAFE + MARKET'],
-  }),
-  brunch: buildPresetMatrix({
-    lines: ['BRUNCH', 'SATURDAY 8-2', 'NOW POURING'],
-  }),
-  weather: buildPresetMatrix({
-    lines: ['AUSTIN 72°', 'SUNNY + CLEAR', 'SUNSET 7:58'],
-  }),
-  dinner: buildPresetMatrix({
-    lines: ['NOW SERVING', 'DINNER', 'UNTIL LATE'],
-  }),
-})
-
-const MATRIX_SHOWCASE_PRESETS = Object.freeze({
-  letters: Object.freeze({
-    key: 'letters',
-    label: 'Letters',
-    matrix: buildPresetMatrix({
-      lines: [
-        'A B C D E F',
-        'G H I J K L',
-        'M N O P Q R',
-        'S T U V W X',
-        'Y Z',
-      ],
-    }),
-  }),
-  numbers: Object.freeze({
-    key: 'numbers',
-    label: 'Numbers',
-    matrix: buildPresetMatrix({
-      lines: [
-        '0 1 2 3 4',
-        '5 6 7 8 9',
-        '72° 7:58 8-2',
-        '24/7 50% +1',
-      ],
-    }),
-  }),
-  punctuation: Object.freeze({
-    key: 'punctuation',
-    label: 'Punctuation',
-    matrix: buildPresetMatrix({
-      lines: [
-        '! ? : ; , .',
-        '@ # $ % & +',
-        '( ) - = / "',
-        "' °",
-      ],
-    }),
-  }),
-  tiles: Object.freeze({
-    key: 'tiles',
-    label: 'Color Tiles',
-    matrix: buildColorShowcaseMatrix(),
-  }),
-})
-
-function resolveBoardProduct(productKey, presentation = 'demo') {
-  if (productKey && BOARD_RENDER_PRODUCTS[productKey]) return BOARD_RENDER_PRODUCTS[productKey]
-  if (presentation === 'mini') return BOARD_RENDER_PRODUCTS.tile
-  if (presentation === 'embedded') return BOARD_RENDER_PRODUCTS.console
-  return BOARD_RENDER_PRODUCTS.flagship
-}
-
-function applyBoardProductVars(root, product) {
-  root.style.setProperty('--vb-shell-padding', `${product.shellPaddingPx}px`)
-  root.style.setProperty('--vb-face-padding', `${product.facePaddingPx}px`)
-  root.style.setProperty('--vb-grid-gap', `${product.gridGapPx}px`)
-  root.style.setProperty('--vb-cell-radius', `${product.cellRadiusPx}px`)
-  root.style.setProperty('--vb-disc-radius', `${product.discRadiusPx}px`)
-  root.style.setProperty('--vb-disc-width', `${product.discWidthPct}%`)
-  root.style.setProperty('--vb-disc-height', `${product.discHeightPct}%`)
-  root.style.setProperty('--vb-disc-font-weight', String(product.fontWeight))
-  root.style.setProperty('--vb-glyph-scale-x', String(product.glyphScaleX))
-  root.style.setProperty('--vb-glyph-box-width', `${product.glyphBoxWidthPct}%`)
-  root.style.setProperty('--vb-glyph-box-height', `${product.glyphBoxHeightPct}%`)
-  root.style.setProperty('--vb-glyph-shift-y', `${product.glyphShiftYPct}%`)
-}
-
-function ensureVestaboardStyles(doc = document) {
-  if (doc.getElementById(DEMO_STYLE_ID)) return
-  const style = doc.createElement('style')
-  style.id = DEMO_STYLE_ID
-  style.textContent = `
-    .vb-module {
-      display: grid;
-      gap: var(--space-4);
-    }
-
-    .vb-module[data-presentation="demo"] {
-      padding: var(--space-6);
-      border-radius: var(--radius-card);
-      border: 1px solid var(--line-soft);
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
-        var(--bg-shell);
-      box-shadow: var(--shadow-1), var(--shadow-inset);
-    }
-
-    .vb-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      gap: var(--space-4);
-    }
-
-    .vb-kicker {
-      margin: 0 0 8px;
-      font-family: var(--font-mono);
-      font-size: var(--text-xs);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent-citron);
-    }
-
-    .vb-title {
-      margin: 0;
-      font-family: var(--font-display);
-      font-weight: 400;
-      font-size: clamp(30px, 4vw, 46px);
-      line-height: var(--leading-tight);
-    }
-
-    .vb-subtitle {
-      margin: 10px 0 0;
-      max-width: 56ch;
-      color: var(--text-muted);
-      line-height: 1.65;
-    }
-
-    .vb-shell {
-      position: relative;
-      width: 100%;
-      max-width: 100%;
-      border-radius: 8px;
-      padding: var(--vb-shell-padding, 8px);
-      background: var(--board-shell);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.02),
-        0 8px 16px rgba(0, 0, 0, 0.2);
-      overflow: hidden;
-    }
-
-    .vb-shell::before,
-    .vb-shell::after {
-      content: "";
-      position: absolute;
-      pointer-events: none;
-    }
-
-    .vb-shell::before {
-      inset: 0;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      border-radius: inherit;
-      background: transparent;
-    }
-
-    .vb-shell::after {
-      inset: auto 0 0 0;
-      height: 0;
-      background: transparent;
-    }
-
-    .vb-face {
-      position: relative;
-      border-radius: 4px;
-      padding: var(--vb-face-padding, 8px);
-      background: var(--board-face);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      overflow: hidden;
-    }
-
-    .vb-face::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
-      transform: translateX(-130%);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .vb-module[data-busy="true"] .vb-face::before {
-      opacity: 1;
-      animation: vb-sheen 1.15s var(--ease-standard) infinite;
-    }
-
-    .vb-grid {
-      position: relative;
-      display: grid;
-      grid-template-columns: repeat(${GRID_COLS}, minmax(0, 1fr));
-      gap: var(--vb-grid-gap, 2px);
-      width: 100%;
-    }
-
-    .vb-cell {
-      aspect-ratio: 1 / 1.87;
-      border-radius: var(--vb-cell-radius, 2px);
-      background: var(--board-cell-shell);
-      border: 1px solid var(--board-cell-edge);
-      display: grid;
-      place-items: center;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.008),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.18);
-    }
-
-    .vb-disc {
-      position: relative;
-      width: var(--vb-disc-width, 86%);
-      height: var(--vb-disc-height, 82%);
-      border-radius: var(--vb-disc-radius, 1px);
-      display: grid;
-      place-items: center;
-      background: var(--board-disc-empty);
-      color: transparent;
-      font-family: var(--font-mono);
-      font-size: var(--vb-disc-font-size, 11px);
-      line-height: 1;
-      font-weight: var(--vb-disc-font-weight, 800);
-      letter-spacing: 0;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.015),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.4);
-      transition:
-        background var(--speed-base) var(--ease-standard),
-        color var(--speed-base) var(--ease-standard),
-        transform var(--speed-fast) var(--ease-standard),
-        opacity var(--speed-base) var(--ease-standard);
-      transform-style: preserve-3d;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: geometricPrecision;
-    }
-
-    .vb-disc::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 50%;
-      height: 1px;
-      background: var(--board-seam);
-      opacity: 0.52;
-      transform: translateY(-0.5px);
-      pointer-events: none;
-    }
-
-    .vb-disc[data-state="ghost"] {
-      background: var(--board-disc-ghost);
-      color: transparent;
-      opacity: 0.96;
-    }
-
-    .vb-disc[data-state="live-text"] {
-      background: var(--board-disc-text);
-      color: var(--board-glyph);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.02),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.46);
-    }
-
-    .vb-disc[data-state="live-tile"] {
-      color: transparent;
-    }
-
-    .vb-disc[data-state="empty"] {
-      opacity: 0.96;
-    }
-
-    .vb-disc[data-flipping="true"] {
-      animation: vb-flip 460ms var(--ease-standard);
-    }
-
-    .vb-glyph {
-      display: grid;
-      place-items: center;
-      width: var(--vb-glyph-box-width, 90%);
-      height: var(--vb-glyph-box-height, 94%);
-      line-height: 0;
-      color: inherit;
-      transform: translateY(var(--vb-glyph-shift-y, 0%)) scaleX(var(--vb-glyph-scale-x, 1));
-      transform-origin: center;
-      text-shadow: 0 0 0.06px rgba(255, 253, 247, 0.22);
-    }
-
-    .vb-glyph-svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-      shape-rendering: crispEdges;
-    }
-
-    .vb-glyph-path {
-      fill: currentColor;
-    }
-
-    .vb-glyph-fallback {
-      display: inline-block;
-      font-family: var(--font-mono);
-      font-size: var(--vb-disc-font-size, 11px);
-      line-height: 1;
-      font-weight: var(--vb-disc-font-weight, 800);
-      letter-spacing: 0;
-    }
-
-    .vb-meta {
-      display: flex;
-      justify-content: space-between;
-      gap: var(--space-4);
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .vb-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--line-medium);
-      background: rgba(255, 255, 255, 0.03);
-      color: var(--text-body);
-      font-size: var(--text-sm);
-    }
-
-    .vb-toolbar {
-      display: flex;
-      gap: var(--space-3);
-      flex-wrap: wrap;
-    }
-
-    .vb-showcase {
-      display: grid;
-      gap: var(--space-4);
-    }
-
-    .vb-showcase-actions {
-      display: flex;
-      gap: var(--space-3);
-      flex-wrap: wrap;
-    }
-
-    .vb-showcase-actions [data-showcase-active="true"] {
-      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
-    }
-
-    .vb-showcase-render {
-      display: grid;
-    }
-
-    .vb-slot-fill {
-      width: 100%;
-      height: 100%;
-    }
-
-    .vb-module[data-board-product="console"] .vb-shell,
-    .vb-module[data-board-product="tile"] .vb-shell {
-      border-radius: 6px;
-      border-color: rgba(255, 255, 255, 0.025);
-      box-shadow: none;
-    }
-
-    .vb-module[data-board-product="console"] .vb-face,
-    .vb-module[data-board-product="tile"] .vb-face {
-      border-radius: 3px;
-      border-color: rgba(255, 255, 255, 0.02);
-    }
-
-    .vb-module[data-board-product="console"] .vb-cell,
-    .vb-module[data-board-product="tile"] .vb-cell {
-      border-color: rgba(255, 255, 255, 0.009);
-      box-shadow: none;
-    }
-
-    .vb-module[data-board-product="console"] .vb-disc[data-state="live-text"],
-    .vb-module[data-board-product="tile"] .vb-disc[data-state="live-text"] {
-      background: #0f0d0a;
-    }
-
-    .vb-module[data-board-product="console"] .vb-disc::after {
-      opacity: 0.18;
-    }
-
-    .vb-module[data-board-product="tile"] .vb-disc::after {
-      opacity: 0.12;
-    }
-
-    @keyframes vb-sheen {
-      from { transform: translateX(-130%); }
-      to { transform: translateX(140%); }
-    }
-
-    @keyframes vb-flip {
-      0% {
-        transform: rotateX(0deg) scaleY(1);
-        filter: brightness(0.85);
-      }
-      45% {
-        transform: rotateX(-86deg) scaleY(0.85);
-        filter: brightness(1.18);
-      }
-      100% {
-        transform: rotateX(0deg) scaleY(1);
-        filter: brightness(1);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .vb-module[data-busy="true"] .vb-face::before,
-      .vb-disc[data-flipping="true"] {
-        animation: none;
-      }
-    }
-  `
-  doc.head.append(style)
-}
-
-function isValidMatrix(matrix) {
-  return (
-    Array.isArray(matrix) &&
-    matrix.length === GRID_ROWS &&
-    matrix.every((row) => Array.isArray(row) && row.length === GRID_COLS)
-  )
-}
-
-function flattenMatrix(matrix) {
-  const flat = new Uint16Array(CELL_COUNT)
-  let cursor = 0
-  for (let rowIndex = 0; rowIndex < GRID_ROWS; rowIndex++) {
-    const row = matrix[rowIndex] ?? []
-    for (let colIndex = 0; colIndex < GRID_COLS; colIndex++) {
-      flat[cursor++] = row[colIndex] ?? 0
-    }
-  }
-  return flat
-}
-
-function createStreamOrder(flatCodes) {
-  const border = []
-  const text = []
-
-  for (let index = 0; index < flatCodes.length; index++) {
-    const code = flatCodes[index]
-    if (!code) continue
-    if (code >= 63) border.push(index)
-    else text.push(index)
-  }
-
-  text.sort((a, b) => {
-    const rowA = Math.floor(a / GRID_COLS)
-    const rowB = Math.floor(b / GRID_COLS)
-    if (rowA !== rowB) return rowA - rowB
-    const colA = a % GRID_COLS
-    const colB = b % GRID_COLS
-    const distanceA = Math.abs(colA - GRID_COLS / 2)
-    const distanceB = Math.abs(colB - GRID_COLS / 2)
-    return distanceA - distanceB
-  })
-
-  return [...border, ...text]
-}
-
-function reduceMotion() {
-  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
-}
-
-function signatureForState(code, revealed) {
-  if (!code) return 0
-  if (!revealed) return code * 4 + 1
-  if (code >= 63) return code * 4 + 2
-  return code * 4 + 3
-}
-
-function patchDisc(disc, glyphPathNode, glyphSvgNode, glyphFallbackNode, code, revealed, signatures, index) {
-  const nextSignature = signatureForState(code, revealed)
-  if (signatures[index] === nextSignature) return
-  signatures[index] = nextSignature
-
-  if (!code) {
-    if (disc.dataset.state !== 'empty') disc.dataset.state = 'empty'
-    if (glyphPathNode.getAttribute('d') !== '') glyphPathNode.setAttribute('d', '')
-    if (glyphFallbackNode.textContent !== '') glyphFallbackNode.textContent = ''
-    glyphSvgNode.hidden = true
-    glyphFallbackNode.hidden = true
-    if (disc.style.backgroundColor !== '') disc.style.backgroundColor = ''
-    if (disc.style.color !== '') disc.style.color = ''
-    return
-  }
-
-  if (!revealed) {
-    if (disc.dataset.state !== 'ghost') disc.dataset.state = 'ghost'
-    if (glyphPathNode.getAttribute('d') !== '') glyphPathNode.setAttribute('d', '')
-    if (glyphFallbackNode.textContent !== '') glyphFallbackNode.textContent = ''
-    glyphSvgNode.hidden = true
-    glyphFallbackNode.hidden = true
-    if (disc.style.backgroundColor !== '') disc.style.backgroundColor = ''
-    if (disc.style.color !== '') disc.style.color = ''
-    return
-  }
-
-  if (code >= 63) {
-    if (disc.dataset.state !== 'live-tile') disc.dataset.state = 'live-tile'
-    if (glyphPathNode.getAttribute('d') !== '') glyphPathNode.setAttribute('d', '')
-    if (glyphFallbackNode.textContent !== '') glyphFallbackNode.textContent = ''
-    glyphSvgNode.hidden = true
-    glyphFallbackNode.hidden = true
-    const nextColor = TILE_CODE_TO_COLOR[code] ?? '#fff'
-    if (disc.style.backgroundColor !== nextColor) disc.style.backgroundColor = nextColor
-    if (disc.style.color !== '') disc.style.color = ''
-    return
-  }
-
-  if (disc.dataset.state !== 'live-text') disc.dataset.state = 'live-text'
-  const nextLabel = CODE_TO_CHAR[code] ?? ''
-  const nextPath = getBoardGlyphPath(nextLabel)
-  if (nextPath) {
-    if (glyphPathNode.getAttribute('d') !== nextPath) glyphPathNode.setAttribute('d', nextPath)
-    glyphSvgNode.hidden = false
-    if (glyphFallbackNode.textContent !== '') glyphFallbackNode.textContent = ''
-    glyphFallbackNode.hidden = true
-  } else {
-    if (glyphPathNode.getAttribute('d') !== '') glyphPathNode.setAttribute('d', '')
-    glyphSvgNode.hidden = true
-    if (glyphFallbackNode.textContent !== nextLabel) glyphFallbackNode.textContent = nextLabel
-    glyphFallbackNode.hidden = false
-  }
-  if (disc.style.backgroundColor !== '') disc.style.backgroundColor = ''
-  if (disc.style.color !== '') disc.style.color = ''
-}
-
-function createVestaboardRenderer({
-  matrix = MATRIX_PRESETS.reopening,
-  title = 'Vestaboard render module',
-  subtitle = 'Same-shape prefill first, then a border-first live flip stream.',
-  kicker = 'Render lab',
-  presentation = 'demo',
-  boardProduct,
-  showToolbar = presentation === 'demo',
-  autoPlay = presentation === 'demo',
-  statusText = 'Prefill skeleton ready',
-} = {}) {
-  if (!isValidMatrix(matrix)) throw new Error('createVestaboardRenderer: invalid matrix')
-
-  ensureVestaboardStyles(document)
-  const doc = document
-  const product = resolveBoardProduct(boardProduct, presentation)
-
-  const root = doc.createElement('section')
-  root.className = 'vb-module'
-  root.dataset.presentation = presentation
-  root.dataset.boardProduct = product.key
-  root.dataset.busy = 'false'
-  applyBoardProductVars(root, product)
-
-  if (presentation === 'demo') {
-    const header = doc.createElement('div')
-    header.className = 'vb-header'
-    header.innerHTML = `
-      <div>
-        <p class="vb-kicker">${kicker}</p>
-        <h3 class="vb-title">${title}</h3>
-        <p class="vb-subtitle">${subtitle}</p>
-      </div>
-    `
-    root.append(header)
-  }
-
-  const shell = doc.createElement('div')
-  shell.className = 'vb-shell'
-  const face = doc.createElement('div')
-  face.className = 'vb-face'
-  const grid = doc.createElement('div')
-  grid.className = 'vb-grid'
-
-  const discNodes = new Array(CELL_COUNT)
-  const glyphPathNodes = new Array(CELL_COUNT)
-  const glyphSvgNodes = new Array(CELL_COUNT)
-  const glyphFallbackNodes = new Array(CELL_COUNT)
-  const fragment = doc.createDocumentFragment()
-  for (let i = 0; i < CELL_COUNT; i++) {
-    const cell = doc.createElement('div')
-    cell.className = 'vb-cell'
-    const disc = doc.createElement('div')
-    disc.className = 'vb-disc'
-    disc.dataset.state = 'empty'
-    const glyph = doc.createElement('span')
-    glyph.className = 'vb-glyph'
-    const glyphSvg = doc.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    glyphSvg.classList.add('vb-glyph-svg')
-    glyphSvg.setAttribute('viewBox', BOARD_GLYPH_VIEWBOX)
-    glyphSvg.setAttribute('aria-hidden', 'true')
-    glyphSvg.setAttribute('focusable', 'false')
-    glyphSvg.hidden = true
-    const glyphPath = doc.createElementNS('http://www.w3.org/2000/svg', 'path')
-    glyphPath.classList.add('vb-glyph-path')
-    glyphSvg.append(glyphPath)
-    const glyphFallback = doc.createElement('span')
-    glyphFallback.className = 'vb-glyph-fallback'
-    glyphFallback.hidden = true
-    glyph.append(glyphSvg, glyphFallback)
-    disc.append(glyph)
-    cell.append(disc)
-    discNodes[i] = disc
-    glyphPathNodes[i] = glyphPath
-    glyphSvgNodes[i] = glyphSvg
-    glyphFallbackNodes[i] = glyphFallback
-    fragment.append(cell)
-  }
-  grid.append(fragment)
-
-  face.append(grid)
-  shell.append(face)
-  root.append(shell)
-
-  const meta = doc.createElement('div')
-  meta.className = 'vb-meta'
-  const statusNode = doc.createElement('div')
-  statusNode.className = 'vb-status'
-  statusNode.dataset.role = 'vestaboard-status'
-  statusNode.textContent = statusText
-  meta.append(statusNode)
-
-  if (showToolbar) {
-    const toolbar = doc.createElement('div')
-    toolbar.className = 'vb-toolbar'
-    const prefillButton = createButton({ label: 'Show prefill', variant: 'secondary' })
-    const replayButton = createButton({ label: 'Replay flips', variant: 'primary' })
-    const settleButton = createButton({ label: 'Settle instantly', variant: 'ghost' })
-    toolbar.append(prefillButton, replayButton, settleButton)
-    meta.append(toolbar)
-    prefillButton.dataset.action = 'prefill'
-    replayButton.dataset.action = 'replay'
-    settleButton.dataset.action = 'settle'
-  }
-
-  if (presentation === 'demo') root.append(meta)
-
-  let liveMatrix = cloneMatrix(matrix)
-  let flatCodes = flattenMatrix(liveMatrix)
-  let streamOrder = createStreamOrder(flatCodes)
-  const revealMask = new Uint8Array(CELL_COUNT)
-  const appliedSignatures = new Int32Array(CELL_COUNT)
-  appliedSignatures.fill(-1)
-  const flipDeadlines = new Float64Array(CELL_COUNT)
-  let activeFlipIndices = []
-  let animationFrame = 0
-  let resizeObserver = null
-
-  // Hot-path strategy:
-  // - cache a flat 132-cell code array
-  // - track revealed cells in a Uint8Array
-  // - diff each cell via a compact integer signature
-  // - stream via ONE requestAnimationFrame loop instead of N setTimeouts
-  //
-  // Result: each frame patches only newly changed cells. The old path
-  // re-rendered all 132 cells for every reveal step, which was O(n^2) over
-  // a full stream. This path is O(n) for the stream plus cheap flip cleanup.
-
-  function updateStatus(text) {
-    if (statusNode.textContent !== text) statusNode.textContent = text
-  }
-
-  function refreshScale() {
-    if (!grid.isConnected) return
-    const gridWidth = grid.clientWidth
-    if (!gridWidth) return
-
-    const computed = getComputedStyle(grid)
-    const gap = parseFloat(computed.columnGap || computed.gap || `${product.gridGapPx}`) || product.gridGapPx
-    const cellWidth = Math.max(0, (gridWidth - gap * (GRID_COLS - 1)) / GRID_COLS)
-    const nextFontPx = Math.max(
-      product.minFontPx,
-      Math.min(product.maxFontPx, cellWidth * product.glyphRatio),
-    )
-    const nextFontValue = `${nextFontPx.toFixed(2)}px`
-    if (root.style.getPropertyValue('--vb-disc-font-size') !== nextFontValue) {
-      root.style.setProperty('--vb-disc-font-size', nextFontValue)
-    }
-  }
-
-  function attachScaleObserver() {
-    if (resizeObserver || typeof ResizeObserver === 'undefined') return
-    resizeObserver = new ResizeObserver(() => {
-      refreshScale()
-    })
-    resizeObserver.observe(shell)
-  }
-
-  function disconnectScaleObserver() {
-    resizeObserver?.disconnect()
-    resizeObserver = null
-  }
-
-  function stopFlips() {
-    for (let i = 0; i < activeFlipIndices.length; i++) {
-      const index = activeFlipIndices[i]
-      const disc = discNodes[index]
-      if (disc?.dataset.flipping === 'true') disc.dataset.flipping = 'false'
-      flipDeadlines[index] = 0
-    }
-    activeFlipIndices = []
-  }
-
-  function cancelLoop() {
-    if (animationFrame !== 0) {
-      cancelAnimationFrame(animationFrame)
-      animationFrame = 0
-    }
-  }
-
-  function stopAnimation() {
-    cancelLoop()
-    stopFlips()
-  }
-
-  function patchIndex(index, revealed) {
-    patchDisc(
-      discNodes[index],
-      glyphPathNodes[index],
-      glyphSvgNodes[index],
-      glyphFallbackNodes[index],
-      flatCodes[index],
-      revealed,
-      appliedSignatures,
-      index,
-    )
-  }
-
-  function patchAll(revealed) {
-    for (let index = 0; index < CELL_COUNT; index++) {
-      const isRevealed = revealed === true ? true : revealed === false ? false : revealMask[index] === 1
-      patchIndex(index, isRevealed)
-    }
-  }
-
-  function markFlipping(index, now) {
-    const disc = discNodes[index]
-    if (!disc) return
-    disc.dataset.flipping = 'true'
-    flipDeadlines[index] = now + FLIP_RESET_MS
-    activeFlipIndices.push(index)
-  }
-
-  function settleExpiredFlips(now) {
-    if (activeFlipIndices.length === 0) return
-    const remaining = []
-    for (let i = 0; i < activeFlipIndices.length; i++) {
-      const index = activeFlipIndices[i]
-      if (flipDeadlines[index] > now) {
-        remaining.push(index)
-        continue
-      }
-      const disc = discNodes[index]
-      if (disc?.dataset.flipping === 'true') disc.dataset.flipping = 'false'
-      flipDeadlines[index] = 0
-    }
-    activeFlipIndices = remaining
-  }
-
-  function paintPrefill() {
-    stopAnimation()
-    root.dataset.busy = 'true'
-    revealMask.fill(0)
-    patchAll(false)
-    updateStatus('Prefill skeleton: exact future footprint')
-  }
-
-  function paintReady() {
-    stopAnimation()
-    root.dataset.busy = 'false'
-    revealMask.fill(1)
-    patchAll(true)
-    updateStatus('Settled render: full matrix live')
-  }
-
-  function replay() {
-    paintPrefill()
-    if (reduceMotion()) {
-      paintReady()
-      return
-    }
-
-    const startAt = performance.now() + PREFILL_HOLD_MS
-    let revealedCount = 0
-    let startedStreaming = false
-
-    const tick = (now) => {
-      if (now >= startAt) {
-        if (!startedStreaming) {
-          startedStreaming = true
-          updateStatus('Streaming render: border first, then content')
-        }
-
-        const targetCount = Math.min(
-          streamOrder.length,
-          Math.floor((now - startAt) / STREAM_INTERVAL_MS) + 1,
-        )
-
-        while (revealedCount < targetCount) {
-          const index = streamOrder[revealedCount]
-          revealMask[index] = 1
-          patchIndex(index, true)
-          markFlipping(index, now)
-          revealedCount++
-        }
-      }
-
-      settleExpiredFlips(now)
-
-      if (revealedCount < streamOrder.length || activeFlipIndices.length > 0) {
-        animationFrame = requestAnimationFrame(tick)
-        return
-      }
-
-      animationFrame = 0
-      root.dataset.busy = 'false'
-      updateStatus('Live render complete')
-    }
-
-    animationFrame = requestAnimationFrame(tick)
-  }
-
-  function setMatrix(nextMatrix) {
-    if (!isValidMatrix(nextMatrix)) return
-    liveMatrix = cloneMatrix(nextMatrix)
-    flatCodes = flattenMatrix(liveMatrix)
-    streamOrder = createStreamOrder(flatCodes)
-    revealMask.fill(0)
-    appliedSignatures.fill(-1)
-    replay()
-  }
-
-  root.querySelectorAll('[data-action]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const action = button.getAttribute('data-action')
-      if (action === 'prefill') paintPrefill()
-      else if (action === 'settle') paintReady()
-      else replay()
-    })
-  })
-
-  patchAll(false)
-  if (autoPlay) replay()
-  else paintReady()
-
-  return {
-    element: root,
-    boardProduct: product,
-    replay,
-    paintPrefill,
-    paintReady,
-    refreshScale,
-    attachScaleObserver,
-    disconnectScaleObserver,
-    setMatrix,
-  }
-}
-
-function mountVestaboardRenderer(target, options = {}) {
-  const renderer = createVestaboardRenderer(options)
-  target.replaceChildren(renderer.element)
-  renderer.attachScaleObserver()
-  if (typeof requestAnimationFrame === 'function') {
-    requestAnimationFrame(() => {
-      renderer.refreshScale()
-    })
-  } else {
-    renderer.refreshScale()
-  }
-  return renderer
-}
-
-function mountVestaboardSlots(root = document) {
-  root.querySelectorAll('[data-component="vestaboard-demo"]').forEach((slot) => {
-    const preset = slot.getAttribute('data-preset') ?? 'reopening'
-    mountVestaboardRenderer(slot, {
-      matrix: MATRIX_PRESETS[preset] ?? MATRIX_PRESETS.reopening,
-      title: slot.getAttribute('data-title') ?? 'Vestaboard render module',
-      subtitle:
-        slot.getAttribute('data-subtitle') ??
-        'Same-shape prefill first, then a border-first live flip stream.',
-      presentation: 'demo',
-      boardProduct: slot.getAttribute('data-board-product') ?? 'flagship',
-      autoPlay: true,
-    })
-  })
-}
-
-function mountVestaboardShowcaseSlots(root = document) {
-  root.querySelectorAll('[data-component="vestaboard-showcase"]').forEach((slot) => {
-    ensureVestaboardStyles(slot.ownerDocument ?? document)
-
-    const initialKey = slot.getAttribute('data-initial-showcase') ?? 'letters'
-    const boardProduct = slot.getAttribute('data-board-product') ?? 'flagship'
-    const showcase = slot.ownerDocument.createElement('section')
-    showcase.className = 'vb-showcase'
-
-    const actions = slot.ownerDocument.createElement('div')
-    actions.className = 'vb-showcase-actions'
-    const renderSurface = slot.ownerDocument.createElement('div')
-    renderSurface.className = 'vb-showcase-render'
-
-    const renderer = mountVestaboardRenderer(renderSurface, {
-      matrix: MATRIX_SHOWCASE_PRESETS[initialKey]?.matrix ?? MATRIX_SHOWCASE_PRESETS.letters.matrix,
-      title: 'Vestaboard character study',
-      subtitle:
-        'Click a code family and the board will prefill, flip, and settle so you can inspect the forms.',
-      kicker: 'Glyph lab',
-      presentation: 'demo',
-      boardProduct,
-      showToolbar: false,
-      autoPlay: true,
-      statusText: 'Character study live',
-    })
-
-    function setActive(nextKey) {
-      Object.values(MATRIX_SHOWCASE_PRESETS).forEach((entry) => {
-        const button = actions.querySelector(`[data-showcase-key="${entry.key}"]`)
-        if (!button) return
-        button.dataset.showcaseActive = entry.key === nextKey ? 'true' : 'false'
-      })
-    }
-
-    Object.values(MATRIX_SHOWCASE_PRESETS).forEach((entry, index) => {
-      const button = createButton({
-        label: entry.label,
-        variant: index === 0 ? 'primary' : 'secondary',
-      })
-      button.dataset.showcaseKey = entry.key
-      button.dataset.showcaseActive = entry.key === initialKey ? 'true' : 'false'
-      button.addEventListener('click', () => {
-        setActive(entry.key)
-        renderer.setMatrix(entry.matrix)
-      })
-      actions.append(button)
-    })
-
-    showcase.append(actions, renderSurface)
-    slot.replaceChildren(showcase)
-  })
-}
-
-
-// ---- system/minivestaboard-rendering.js ----
-
-
-function mountMiniVestaboard(target, {
-  preset = 'reopening',
-  presentation = 'mini',
-  boardProduct,
-  autoPlay = false,
-} = {}) {
-  return mountVestaboardRenderer(target, {
-    matrix: MATRIX_PRESETS[preset] ?? MATRIX_PRESETS.reopening,
-    presentation,
-    boardProduct,
-    showToolbar: false,
-    autoPlay,
-    statusText: 'Embedded board preview',
-  })
-}
-
-function mountMiniVestaboardSlots(root = document) {
-  root.querySelectorAll('[data-component="mini-vestaboard"]').forEach((slot) => {
-    const preset = slot.getAttribute('data-preset') ?? 'reopening'
-    const autoPlay = slot.getAttribute('data-autoplay') === 'true'
-    mountMiniVestaboard(slot, {
-      preset,
-      presentation: slot.getAttribute('data-presentation') ?? 'mini',
-      boardProduct: slot.getAttribute('data-board-product') ?? undefined,
-      autoPlay,
-    })
-  })
-}
-
-
-// ---- system/registry.js ----
-
-
-
-
-
-const MATRIX_DESIGN_SYSTEM = Object.freeze({
-  themes: MATRIX_THEMES,
-  components: Object.freeze({
-    buttons: BUTTON_SPECS,
-    vestaboard: Object.freeze({
-      products: BOARD_RENDER_PRODUCTS,
-      presets: MATRIX_PRESETS,
-      showcases: MATRIX_SHOWCASE_PRESETS,
-      createVestaboardRenderer,
-      mountVestaboardRenderer,
-      mountMiniVestaboard,
-    }),
-  }),
-})
-
-function bootDesignSystemPage(root = document) {
-  applyTheme('editorialControlRoom', root.ownerDocument ?? document)
-  hydrateButtons(root)
-  attachThemeSwitches(root, () => {
-    hydrateButtons(root)
-  })
-  mountVestaboardSlots(root)
-  mountVestaboardShowcaseSlots(root)
-  mountMiniVestaboardSlots(root)
-  return MATRIX_DESIGN_SYSTEM
-}
-
-
-global.MatrixDS = { bootDesignSystemPage, MATRIX_DESIGN_SYSTEM, applyTheme, attachThemeSwitches, hydrateButtons, mountVestaboardSlots, mountVestaboardShowcaseSlots, mountMiniVestaboardSlots, mountMiniVestaboard, mountVestaboardRenderer, createVestaboardRenderer, MATRIX_THEMES, MATRIX_PRESETS, MATRIX_SHOWCASE_PRESETS, BUTTON_SPECS };
-
-})(window);
-MatrixDS.bootDesignSystemPage(document)</script>
-<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0e110e"/><rect x="10" y="38" width="22" height="24" fill="#3a3a32" opacity="0.4"/><rect x="38" y="34" width="24" height="32" fill="#f2ead7"/><rect x="68" y="38" width="22" height="24" fill="#3a3a32" opacity="0.6"/></svg></template>
-</body></html>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="../tokens.css"/><link rel="stylesheet" href="../colors_and_type.css"/><style>
+html,body{margin:0;padding:0;background:var(--bg-app);color:var(--text-strong);font-family:var(--font-sans)}
+.card{padding:22px;display:grid;gap:20px}
+.eye{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin:0 0 10px 0}
+.rail{background:linear-gradient(180deg,var(--bg-paper),var(--bg-paper-2));border-radius:var(--radius-card);padding:22px;display:grid;gap:16px;max-width:380px;color:var(--text-dark);box-shadow:var(--shadow-1),var(--shadow-inset)}
+.rail h3{margin:0;font-family:var(--font-display);font-weight:400;font-size:28px;line-height:1.05;color:var(--text-dark)}
+.rail .rail-eye{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#b24a14;margin:0 0 4px 0}
+.canvas-frame{background:#080808;border-radius:18px;padding:6px;aspect-ratio:22/6}
+.note{font-size:13px;color:var(--text-dark-muted);line-height:1.5;padding:10px 12px;border-radius:12px;background:rgba(33,25,17,0.06);border:1px solid rgba(33,25,17,0.08)}
+.note strong{color:var(--text-dark);display:block;margin-bottom:2px;font-size:13px}
+</style></head><body><div class="card">
+<p class="eye">Board canvas — the large preview frame that anchors the composition view's right rail. Paper-toned surface, stage-lit against the dark shell.</p>
+<aside class="rail">
+  <div><p class="rail-eye">Live preview</p><h3>Saturday reopening</h3></div>
+  <div class="canvas-frame"><div data-component="mini-vestaboard" data-preset="reopening" data-board-product="flagship" data-autoplay="true"></div></div>
+  <div class="note"><strong>Why this matters</strong>Right rail holds the preview and the agent's rationale. Actions happen in the chat column.</div>
+</aside>
+</div>
+<script type="module">
+  import { bootDesignSystemPage } from '../system/registry.js';
+  bootDesignSystemPage(document);
+</script>
+</body></html>

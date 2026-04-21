@@ -1,0 +1,31 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="../tokens.css"/><link rel="stylesheet" href="../colors_and_type.css"/><style>
+html,body{margin:0;padding:0;background:var(--bg-app);color:var(--text-strong);font-family:var(--font-sans);min-height:100vh;display:grid;place-items:center}
+.stage{padding:48px 22px;display:grid;place-items:center;width:100%}
+.auth{background:linear-gradient(180deg,var(--bg-paper),var(--bg-paper-2));color:var(--text-dark);border-radius:var(--radius-card);padding:40px 36px;width:min(420px,100%);display:grid;gap:20px;box-shadow:var(--shadow-1),var(--shadow-inset)}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{width:32px;height:32px;border-radius:10px;background:linear-gradient(180deg,#1f241f,#131813);position:relative;box-shadow:var(--shadow-inset)}
+.mark::after{content:"";position:absolute;inset:4px;border-radius:6px;background:linear-gradient(135deg,var(--accent-ember) 0%,var(--accent-ember) 48%,transparent 48%,transparent 52%,#f7efd9 52%,#f7efd9 100%)}
+.brand-name{font-family:var(--font-display);font-weight:400;font-size:22px;line-height:1;color:var(--text-dark)}
+.eye{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#b24a14;margin:0}
+h2{margin:0;font-family:var(--font-display);font-weight:400;font-size:30px;line-height:1.1;color:var(--text-dark)}
+p.sub{margin:0;color:var(--text-dark-muted);font-size:13px;line-height:1.5}
+.field{display:grid;gap:6px}
+.field label{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#655b48}
+.field input{appearance:none;border:1px solid rgba(33,25,17,0.18);background:rgba(255,255,255,0.4);border-radius:var(--radius-control);padding:12px 14px;font:inherit;font-size:14px;color:var(--text-dark);outline:none}
+.field input:focus{border-color:rgba(33,25,17,0.3);box-shadow:0 0 0 4px rgba(33,25,17,0.05)}
+.btn{appearance:none;border:0;border-radius:var(--radius-control);padding:12px 18px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;color:#180f0a;background:linear-gradient(180deg,#ff8b55,var(--accent-ember));box-shadow:0 10px 20px rgba(255,106,42,0.25)}
+.fine{color:var(--text-dark-muted);font-size:11px;font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase}
+</style></head><body><div class="stage"><form class="auth" onsubmit="event.preventDefault()">
+  <div class="brand"><div class="mark"></div><div class="brand-name">Matrix</div></div>
+  <div>
+    <p class="eye">Sign in</p>
+    <h2>Run your board from a conversation.</h2>
+  </div>
+  <p class="sub">Matrix emails you a sign-in link. No password, no setup. Your boards and schedules stay tied to your email.</p>
+  <div class="field">
+    <label for="email">Email</label>
+    <input id="email" type="email" placeholder="you@restaurant.com" autocomplete="email"/>
+  </div>
+  <button class="btn" type="submit">Email my sign-in link</button>
+  <p class="fine">Magic link only</p>
+</form></div></body></html>

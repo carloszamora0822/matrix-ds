@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="../tokens.css"/><link rel="stylesheet" href="../colors_and_type.css"/><style>
+html,body{margin:0;padding:0;background:var(--bg-app);color:var(--text-strong);font-family:var(--font-sans)}
+.card{padding:22px;display:grid;gap:18px}
+.eye{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin:0 0 8px 0}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--accent-success);box-shadow:0 0 0 3px rgba(110,176,129,0.15);flex-shrink:0}
+.row{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);font-size:14px}
+.row strong{color:var(--text-strong);font-weight:600}
+.row .meta{color:var(--text-muted);margin-left:auto;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.stack{display:grid;gap:6px}
+</style></head><body><div class="card">
+<div>
+  <p class="eye">Live — the only status state</p>
+  <div class="row"><span class="live-dot"></span><strong>Studio</strong><span>Saturday brunch</span><span class="meta">until 14:30</span></div>
+</div>
+<div>
+  <p class="eye">Not live — no dot, nothing else</p>
+  <div class="row"><strong>Patio</strong><span class="meta">idle</span></div>
+</div>
+<div>
+  <p class="eye">Boards list usage — live boards surface, quiet ones stay quiet</p>
+  <div class="stack">
+    <div class="row"><span class="live-dot"></span><strong>Studio · Austin</strong></div>
+    <div class="row"><strong>Patio · Austin</strong></div>
+    <div class="row"><strong>Kitchen · Austin</strong></div>
+  </div>
+</div>
+</div></body></html>

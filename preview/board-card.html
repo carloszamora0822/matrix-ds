@@ -1,0 +1,49 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="../tokens.css"/><link rel="stylesheet" href="../colors_and_type.css"/><style>
+html,body{margin:0;padding:0;background:var(--bg-app);color:var(--text-strong);font-family:var(--font-sans)}
+.card{padding:22px;display:grid;gap:20px}
+.eye{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin:0 0 10px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--accent-success);box-shadow:0 0 0 3px rgba(110,176,129,0.15);flex-shrink:0}
+.bc{padding:14px;border-radius:var(--radius-panel);background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);display:grid;gap:12px}
+.bc-head{display:flex;align-items:center;gap:10px}
+.bc-name{font-weight:700;font-size:14px;color:var(--text-strong)}
+.bc-meta{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-left:auto}
+.bc-preview{background:#080808;border-radius:12px;aspect-ratio:22/6;display:flex;align-items:center;justify-content:center}
+.bc-footer{font-size:13px;color:var(--text-muted);line-height:1.4}
+.inline-artifact{padding:12px;border-radius:18px;background:rgba(0,0,0,0.25);border:1px solid var(--line-soft);display:grid;gap:10px;max-width:440px}
+.ia-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ia-title{font-weight:700;font-size:13px;color:var(--text-strong)}
+</style></head><body><div class="card">
+<div>
+  <p class="eye">Small board card — Boards list usage</p>
+  <div class="grid">
+    <div class="bc">
+      <div class="bc-head"><span class="live-dot"></span><span class="bc-name">Studio</span><span class="bc-meta">Austin · CT</span></div>
+      <div class="bc-preview"><div data-component="mini-vestaboard" data-preset="brunch" data-board-product="console" data-autoplay="false"></div></div>
+      <div class="bc-footer">Showing Saturday brunch · until 14:30</div>
+    </div>
+    <div class="bc">
+      <div class="bc-head"><span class="bc-name">Patio</span><span class="bc-meta">Austin · CT</span></div>
+      <div class="bc-preview"><div data-component="mini-vestaboard" data-preset="reopening" data-board-product="console" data-autoplay="false"></div></div>
+      <div class="bc-footer">Idle</div>
+    </div>
+    <div class="bc">
+      <div class="bc-head"><span class="bc-name">Kitchen</span><span class="bc-meta">Austin · CT</span></div>
+      <div class="bc-preview"><div data-component="mini-vestaboard" data-preset="weather" data-board-product="console" data-autoplay="false"></div></div>
+      <div class="bc-footer">Idle</div>
+    </div>
+  </div>
+</div>
+<div>
+  <p class="eye">Inline chat artifact — agent drafts a screen, renders as a small board card inside the message</p>
+  <div class="inline-artifact">
+    <div class="ia-head"><span class="ia-title">Saturday reopening</span><span class="live-dot"></span></div>
+    <div data-component="mini-vestaboard" data-preset="reopening" data-board-product="console" data-autoplay="false"></div>
+  </div>
+</div>
+</div>
+<script type="module">
+  import { bootDesignSystemPage } from '../system/registry.js';
+  bootDesignSystemPage(document);
+</script>
+</body></html>

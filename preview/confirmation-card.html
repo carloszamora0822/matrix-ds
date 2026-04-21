@@ -1,0 +1,35 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="../tokens.css"/><link rel="stylesheet" href="../colors_and_type.css"/><style>
+html,body{margin:0;padding:0;background:var(--bg-app);color:var(--text-strong);font-family:var(--font-sans)}
+.card{padding:22px;display:grid;gap:20px;max-width:560px}
+.eye{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin:0 0 8px 0}
+.confirm{padding:18px 20px;border-radius:var(--radius-panel);background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);display:grid;gap:14px}
+.confirm-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.confirm-q{font-family:var(--font-display);font-weight:400;font-size:22px;line-height:1.2;color:var(--text-strong);margin:0}
+.confirm-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.facts{display:grid;gap:6px;padding:12px 14px;border-radius:14px;background:rgba(0,0,0,0.2);border:1px solid var(--line-soft)}
+.fact{display:flex;gap:12px;font-size:13px;line-height:1.5}
+.fact-key{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);min-width:70px;padding-top:2px}
+.fact-val{color:var(--text-strong)}
+.actions{display:flex;gap:8px;justify-content:flex-end}
+.btn{appearance:none;border:1px solid transparent;border-radius:var(--radius-control);padding:10px 18px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.btn.primary{color:#180f0a;background:linear-gradient(180deg,#ff8b55,var(--accent-ember));box-shadow:0 10px 20px var(--button-primary-shadow,rgba(255,106,42,0.2))}
+.btn.secondary{color:var(--text-body);background:transparent;border-color:var(--line-medium)}
+</style></head><body><div class="card">
+<p class="eye">Scheduling confirmation — facts + yes/edit. No timeline, no calendar picker.</p>
+<div class="confirm">
+  <div class="confirm-head">
+    <p class="confirm-q">Show this Saturday 8am to 6pm on Studio?</p>
+    <span class="confirm-label">Confirm to publish</span>
+  </div>
+  <div class="facts">
+    <div class="fact"><span class="fact-key">Screen</span><span class="fact-val">Saturday reopening</span></div>
+    <div class="fact"><span class="fact-key">Board</span><span class="fact-val">Studio · Austin</span></div>
+    <div class="fact"><span class="fact-key">When</span><span class="fact-val">Saturday Apr 25 · 08:00 – 18:00 CT</span></div>
+    <div class="fact"><span class="fact-key">Conflicts</span><span class="fact-val">None</span></div>
+  </div>
+  <div class="actions">
+    <button class="btn secondary">Edit</button>
+    <button class="btn primary">Confirm</button>
+  </div>
+</div>
+</div></body></html>
