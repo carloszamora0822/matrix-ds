@@ -1,6 +1,6 @@
 {
   "name": "matrix-ds",
-  "version": "0.1.0-alpha.1",
+  "version": "0.2.0-alpha.1",
   "private": false,
   "description": "Public design-system workspace for Matrix UI primitives and board-rendering prototypes.",
   "license": "UNLICENSED",

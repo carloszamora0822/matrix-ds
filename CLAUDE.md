@@ -14,7 +14,9 @@ A dark, warm, editorial control room where someone composes beautiful split-flap
 
 ## Design Thesis
 
-Read `docs/design-brief.md` before every session. The thesis in short:
+Read `docs/design-brief.md` **and** `docs/design-direction.md` before every session. The brief defines the visual language; the direction defines what Matrix chooses to render (and what it refuses to). Both are load-bearing.
+
+The thesis in short:
 
 - **Editorial control room** — not a SaaS dashboard, not a crypto terminal, not a pastel AI playground
 - **Dark shell, warm paper inserts** — stage-lit artifacts against warm carbon surfaces
@@ -90,7 +92,69 @@ Foundation layer — colors, type scale, spacing, radii, shadows, motion, board-
 - `registry.js` — master boot file that wires everything together
 
 ### Prototype (`prototype.html`)
-A living specimen page that shows the design system in context — not a component library page, but a page that *feels like the product*.
+A living specimen page that shows the design system in context — not a component library page, but a page that *feels like the product*. Tokens are inlined in `<style id="inline-tokens">` so the prototype stays self-contained for design review.
+
+### Component preview cards (`preview/`)
+Per-primitive preview HTML cards: buttons, cards, chips, fields, nav-items, messages, timeline, type scales, radii, shadows, spacing scale, color surfaces/text/signal, logo. Review individual primitives here; see them composed in `prototype.html` and `ui_kits/`.
+
+### UI kits (`ui_kits/`)
+Product-level composed layouts, one folder per product surface:
+
+- `app/` — the Matrix chat workspace (auth, chat, boards, schedule)
+- `marketing/` — public marketing site
+- `vestaboard/` — the split-flap board renderer kit in isolation
+
+UI kits are the second step of review: once primitives look right in `preview/`, they must also work composed in `ui_kits/`. If a primitive fails here, it fails.
+
+### Semantic token layer (`colors_and_type.css`)
+Extends `tokens.css` with semantic aliases (`--fg-1`, `--fg-commit`, `.eyebrow`, `.h-display`) and Google Font imports. Base tokens in `tokens.css`; semantic tokens and typography utilities in `colors_and_type.css`. Never duplicate values — always extend.
+
+## The Prototype Law
+
+`prototype.html` is not a demo. It is the **single canonical gallery** of every visible state in the Matrix product. Every display, modal, confirmation card, toast, loading skeleton, empty state, validation error, hover/focus/disabled control, and theme variant MUST be visible in `prototype.html`.
+
+**If a state is not in `prototype.html`, it does not exist.** The production app (`Matrix`) is forbidden from rendering UI that is not first proven here. The consumer gate lives upstream in `Matrix/CLAUDE.md` → "Design System Law."
+
+### Rules for every change
+
+- **Every module in `system/` renders in `prototype.html`.** If you add `system/foo.js`, it appears in the prototype at every variant, every state, every theme. No exceptions.
+- **Every state is visible, not just the happy path.** A button needs idle / hover / active / disabled / loading. A field needs idle / focus / error / filled. A card needs rest / hover / selected / disabled / error. If the state exists in the model, it ships in the prototype.
+- **Every modal and overlay renders somewhere on the page.** Don't hide overlays behind click-to-open — render them inline in a dedicated "overlays" artboard so reviewers see them at a glance.
+- **Themes are swappable live.** The prototype must render cleanly in every shipped theme via the runtime switcher. A state that looks wrong in Amber Broadcast is a state that doesn't ship.
+- **No features without specimens.** New Matrix features start here, not in `Matrix/app/**`. If production needs a new state, it's added here first, reviewed by Carlos, extracted into a primitive, and only then consumed.
+- **No flags or conditional hides.** Every specimen is visible by default. Debug toggles live outside `prototype.html`.
+
+### The consumption cascade (this repo's only contract with `Matrix`)
+
+```
+prototype.html  →  system/<name>.js  →  docs (purpose/slots/variants/states/dos/donts)
+             →  CHANGELOG.md entry  →  package.json bump  →  matrix-ds/vX.Y.Z tag  →  Matrix consumes
+```
+
+Skipping a step is forbidden. "I'll add the module now and put it in the prototype later" is not allowed — the prototype is what we review, and review is how things get promoted. Order matters.
+
+### Adding a new component (checklist)
+
+1. Sketch inline in `prototype.html` (plain CSS/HTML is fine for step 1)
+2. Review with Carlos in the browser at every variant, state, and theme
+3. Refine until it's right
+4. Extract to `system/<name>.js` as a named module
+5. Register in `system/registry.js`
+6. Document `purpose / slots / variants / states / dos / donts` as a JSDoc-style header in the module
+7. Swap the inline sketch in `prototype.html` for the registered primitive (prove the module works in context)
+8. Verify every theme renders correctly
+9. Append `CHANGELOG.md`
+10. Bump `MATRIX-DS/package.json` per `VERSIONING.md`
+11. Commit, tag `matrix-ds/vX.Y.Z`, push
+
+Skipping steps 1–3 ships visual debt. Don't.
+
+### Adding a new theme (checklist)
+
+1. Clone the token block in `system/themes.js`
+2. Tune every token — no "defer" values carried over from another theme
+3. Render `prototype.html` in the new theme end-to-end; audit every state for contrast, rhythm, and feel
+4. Only then wire the theme switcher entry and append `CHANGELOG.md`
 
 ## Build Phases (from design-brief.md)
 
@@ -120,6 +184,8 @@ This isn't bureaucracy — it's what separates a design system from a folder of 
 
 When you're unsure which direction to go, use these filters:
 
+0. **Does a non-technical user who spends five minutes a day here need this?** If no, it doesn't ship. `docs/design-direction.md` is the full constraint; this is the one-line version.
+
 1. **Would this feel at home in a Bloomberg terminal or a Linear sidebar?** If yes, you're probably in the right zone. If it feels like Notion or a Bootstrap admin, pull back.
 
 2. **Does this earn its pixels?** Every element should justify its existence. If removing it wouldn't hurt comprehension or feel, remove it.
@@ -129,6 +195,8 @@ When you're unsure which direction to go, use these filters:
 4. **Does the dark shell make this pop?** If an element looks the same on dark and light backgrounds, it's probably not using the contrast system correctly. Paper-toned elements should feel stage-lit. Dark elements should recede.
 
 5. **Is the type doing work?** Serif should only appear in moments of identity (product name, section titles, empty-state messages). If serif is everywhere, it's doing nothing. If sans is everywhere, the product has no voice.
+
+6. **Is there more than one source of status truth?** The user ever sees exactly two states per screen/deck: green dot (live) or nothing. Any attempt to reintroduce "AIRED," "DRAFTED," "HOLDING" etc. is a failure of this filter.
 
 ## Constraints
 
@@ -149,7 +217,7 @@ When you're unsure which direction to go, use these filters:
 
 ## Versioning
 
-This repo uses git tags. Current: `v0.1.0-alpha.1`.
+This repo uses git tags. Current: `v0.2.0-alpha.1`.
 
 - **Patch** — visual fixes, docs, non-breaking tweaks
 - **Minor** — new components, new capabilities, additive changes
@@ -167,5 +235,6 @@ v1.0 is the gate. When this repo tags v1.0, it means:
 - Domain modules are prototyped (auth, chat, board, schedule)
 - At least one mock page proves the system composes into a real product feel
 - The component definition standard (purpose/slots/variants/states/dos/donts) is applied to every shipped component
+- `prototype.html` renders every shipped component in every variant, state, and theme with no visual glitches
 
 Until then, everything is malleable. Experiment freely.

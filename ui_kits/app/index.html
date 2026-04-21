@@ -1,8 +1,10 @@
 <!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Matrix</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<title>Matrix app — workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style id="inline-tokens">:root {
   color-scheme: dark;
 
@@ -79,353 +81,96 @@
 }
 </style>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{background:#0e110e;color:#f7efd9;font-family:var(--font-sans);-webkit-font-smoothing:antialiased;height:100%;overflow:hidden}
-:root{
-  --deck:#0e110e;--panel:#14181a;--panel-2:#1b211b;
-  --rule:rgba(247,239,217,0.10);--rule-h:rgba(247,239,217,0.20);
-  --muted:rgba(247,239,217,0.55);--dim:rgba(247,239,217,0.32);
-  --ink:#f7efd9;
-  --paper:#f2ead7;--paper-2:#e5dbc1;--paper-ink:#241f16;--paper-muted:#6b5f46;
-  --live:#c7d654;--ember:#ff6a2a;--cobalt:#5a78ff;
-  --serif:var(--font-display);--mono:var(--font-mono);--sans:var(--font-sans);
-}
-button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
-input,textarea{font:inherit}
-.cap{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);font-weight:500}
-
-.app{height:100vh;display:grid;grid-template-rows:auto auto auto 1fr auto;gap:0}
-
-/* TOP BAR */
-.top{display:flex;justify-content:space-between;align-items:center;padding:14px 28px;border-bottom:1px solid var(--rule)}
+html,body{margin:0;padding:0;background:radial-gradient(circle at 10% 0%,rgba(90,120,255,0.09),transparent 28%),radial-gradient(circle at 90% 0%,rgba(255,106,42,0.08),transparent 30%),linear-gradient(180deg,#111610,var(--bg-app));color:var(--text-strong);font-family:var(--font-sans);min-height:100vh}
+.app{width:min(1400px,calc(100vw - 40px));margin:0 auto;padding:20px 0;display:grid;grid-template-columns:260px 1fr 380px;gap:16px;min-height:calc(100vh - 40px)}
+aside.side,section.chat,aside.canvas{border-radius:24px;border:1px solid var(--line-soft);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0)),var(--bg-shell);box-shadow:var(--shadow-1),var(--shadow-inset);padding:18px;display:flex;flex-direction:column;gap:16px}
 .brand{display:flex;align-items:center;gap:10px}
-.mark{width:14px;height:14px;position:relative}
-.mark::before,.mark::after{content:"";position:absolute;inset:0}
-.mark::before{background:linear-gradient(135deg,var(--ember) 0 50%, transparent 50%)}
-.mark::after{background:linear-gradient(135deg,transparent 50%, var(--ink) 50%)}
-.brand-name{font-family:var(--serif);font-size:18px}
-.who{font-family:var(--mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim)}
-.who b{color:var(--muted);font-weight:500}
-
-/* AGENT LANE */
-.agent{padding:18px 28px;border-bottom:1px solid var(--rule);background:linear-gradient(180deg,rgba(90,120,255,0.04),transparent);display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center}
-.agent-icon{width:32px;height:32px;border:1px solid var(--cobalt);display:grid;place-items:center;font-family:var(--serif);font-size:18px;color:var(--cobalt);font-style:italic;flex:none}
-.agent-msg{font-family:var(--sans);font-size:14px;line-height:1.5;color:var(--ink)}
-.agent-msg b{color:var(--cobalt);font-weight:500;font-style:italic;font-family:var(--serif);font-size:16px}
-.agent-msg small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);margin-top:4px}
-.agent-actions{display:flex;gap:8px;flex:none}
-.btn{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:9px 14px;font-weight:600;border:1px solid var(--rule-h);background:transparent;color:var(--ink)}
-.btn:hover{background:var(--ink);color:var(--deck)}
-.btn.primary{background:var(--cobalt);color:#fff;border-color:var(--cobalt)}
-.btn.primary:hover{background:#7691ff}
-.btn.ghost{border-color:var(--rule);color:var(--muted);font-weight:500}
-
-/* DAY SCRUBBER */
-.days{display:flex;gap:0;padding:0 28px;border-bottom:1px solid var(--rule);overflow-x:auto;scrollbar-width:none}
-.days::-webkit-scrollbar{display:none}
-.day{padding:14px 18px;display:flex;flex-direction:column;gap:2px;border-right:1px solid var(--rule);cursor:pointer;flex:none;min-width:88px}
-.day:first-child{border-left:1px solid var(--rule)}
-.day .dow{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--dim)}
-.day .num{font-family:var(--serif);font-size:24px;line-height:1;color:var(--muted)}
-.day .stat{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);margin-top:4px}
-.day:hover{background:rgba(247,239,217,0.02)}
-.day.today{background:rgba(255,106,42,0.05)}
-.day.today .dow{color:var(--ember)}
-.day.today .num{color:var(--ink)}
-.day.today .stat{color:var(--ember)}
-.day.sel{background:rgba(247,239,217,0.04);border-bottom:2px solid var(--ink);margin-bottom:-1px}
-.day.sel .num{color:var(--ink)}
-.day.future .num{color:var(--dim)}
-.day .stat .draftdot{color:var(--ember);margin-left:4px}
-
-/* BOARD TABS */
-.boards-tabs{display:flex;gap:0;padding:14px 28px 0;justify-content:space-between;align-items:flex-end}
-.tabs{display:flex;gap:0;border-bottom:1px solid var(--rule);flex:1}
-.tab{padding:10px 16px;font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);background:transparent;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:8px;font-weight:500}
-.tab:hover{color:var(--ink)}
-.tab.on{color:var(--ink);border-bottom-color:var(--ember)}
-.tab .dot{width:6px;height:6px;border-radius:50%;background:var(--dim)}
-.tab .dot.live{background:var(--live);box-shadow:0 0 6px rgba(199,214,84,0.6)}
-.now-text{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--dim);padding:0 0 10px}
-.now-text b{color:var(--live);font-weight:500}
-.now-text b::before{content:"●";margin-right:4px}
-
-/* STRIP */
-.strip-wrap{position:relative;overflow:hidden;background:#0a0c0a;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-.strip-wrap::before,.strip-wrap::after{content:"";position:absolute;top:0;bottom:0;width:80px;pointer-events:none;z-index:3}
-.strip-wrap::before{left:0;background:linear-gradient(90deg,#0a0c0a,transparent)}
-.strip-wrap::after{right:0;background:linear-gradient(270deg,#0a0c0a,transparent)}
-.strip{display:flex;gap:0;align-items:center;padding:32px 80px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:rgba(247,239,217,0.15) transparent;height:100%}
-.strip::-webkit-scrollbar{height:8px}
-.strip::-webkit-scrollbar-thumb{background:rgba(247,239,217,0.15)}
-
-/* GAP */
-.gap{flex:none;width:120px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--dim);position:relative;padding:0 8px}
-.gap-line{width:100%;height:1px;background:repeating-linear-gradient(90deg,var(--dim) 0 6px, transparent 6px 12px)}
-.gap-text{font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--dim);white-space:nowrap}
-.gap-text b{color:var(--muted);font-weight:500}
-
-/* FRAME (each board state) */
-.frame{flex:none;width:300px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:transform 0.15s}
-.frame:hover{transform:translateY(-2px)}
-.frame .frame-when{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:baseline}
-.frame .frame-when b{color:var(--ink);font-weight:500}
-.frame .frame-when .tag{font-size:9px;letter-spacing:0.18em;color:var(--dim)}
-.frame .vesta-host{padding:10px;background:#000;border:1px solid #222}
-.frame .vesta-host[data-component]{padding:0}
-.frame .frame-foot{font-family:var(--sans);font-size:13px;line-height:1.35;color:var(--ink);padding:0 2px}
-.frame .frame-foot small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:0.06em;color:var(--dim);margin-top:3px;text-transform:uppercase}
-
-/* states */
-.frame.past{opacity:0.45}
-.frame.past:hover{opacity:0.75}
-.frame.past .vesta-host{border-color:#1a1a1a}
-.frame.now .vesta-host{border:1px solid var(--live);box-shadow:0 0 0 4px rgba(199,214,84,0.12),0 0 24px rgba(199,214,84,0.2)}
-.frame.now .frame-when b{color:var(--live)}
-.frame.now .frame-when .tag{color:var(--live);font-weight:600}
-.frame.next .vesta-host{border:1px solid var(--ember)}
-.frame.next .frame-when b{color:var(--ember)}
-.frame.next .frame-when .tag{color:var(--ember)}
-.frame.draft{opacity:0.85}
-.frame.draft .vesta-host{border:1px dashed var(--ember);background:#0a0808}
-.frame.draft .frame-when .tag{color:var(--ember)}
-.frame.empty .vesta-host{border:1px dashed rgba(247,239,217,0.18);background:#0a0c0a;height:118px;display:grid;place-items:center}
-.frame.empty .vesta-host .empty-ask{font-family:var(--serif);font-style:italic;color:var(--muted);font-size:14px;text-align:center;padding:0 18px;line-height:1.3}
-.frame.empty:hover .vesta-host .empty-ask{color:var(--ink)}
-.frame.empty .frame-when .tag{color:var(--dim)}
-
-/* DAY MARKER between frames when day flips */
-.day-mark{flex:none;width:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-left:1px dashed rgba(247,239,217,0.18);border-right:1px dashed rgba(247,239,217,0.18);padding:0 12px;align-self:stretch}
-.day-mark .dm-num{font-family:var(--serif);font-size:24px;color:var(--muted);line-height:1}
-.day-mark .dm-dow{font-family:var(--mono);font-size:9px;letter-spacing:0.18em;color:var(--dim);text-transform:uppercase}
-
-/* BOTTOM ASK */
-.ask{padding:14px 28px;border-top:1px solid var(--rule);display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;background:#0c0f0c}
-.ask-glyph{font-family:var(--serif);font-size:24px;font-style:italic;color:var(--ember);width:34px;text-align:center}
-.ask-input{background:transparent;border:0;border-bottom:1px solid var(--rule-h);padding:10px 0;color:var(--ink);font-family:var(--sans);font-size:15px;letter-spacing:-0.005em;outline:none;width:100%}
-.ask-input::placeholder{color:var(--dim);font-style:italic;font-family:var(--serif);font-size:18px}
-.ask-input:focus{border-bottom-color:var(--ember)}
-.quick{display:flex;gap:6px;flex:none}
-.q{padding:6px 10px;font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);border:1px solid var(--rule)}
-.q:hover{color:var(--ink);border-color:var(--rule-h)}
-
-/* SHEET (edit a frame) */
-.sheet{position:fixed;inset:0;background:rgba(8,10,8,0.85);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:100;padding:40px}
-.sheet.open{display:flex}
-.sheet-card{background:var(--paper);color:var(--paper-ink);width:100%;max-width:560px;padding:0;display:flex;flex-direction:column;max-height:90vh;overflow:auto}
-.sheet-head{padding:20px 24px 16px;border-bottom:1px solid rgba(36,31,22,0.15);display:flex;justify-content:space-between;align-items:baseline;gap:14px}
-.sheet-head h3{font-family:var(--serif);font-size:24px;font-weight:400;line-height:1.1}
-.sheet-head h3 em{font-style:italic;color:#a83a14}
-.sheet-when{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;color:var(--paper-muted);text-transform:uppercase;white-space:nowrap}
-.sheet-body{padding:20px 24px;display:flex;flex-direction:column;gap:16px}
-.sheet-body label{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;color:var(--paper-muted);text-transform:uppercase;display:block;margin-bottom:4px}
-.line-edit{font-family:var(--mono);font-size:18px;letter-spacing:0.06em;text-transform:uppercase;color:var(--paper-ink);background:transparent;border:0;border-bottom:1px solid rgba(36,31,22,0.2);padding:10px 0;width:100%;outline:none;font-weight:500}
-.line-edit:focus{border-bottom-color:#a83a14}
-.line-row{display:grid;grid-template-columns:36px 1fr 50px;gap:10px;align-items:center}
-.line-row .ln{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;color:var(--paper-muted)}
-.line-row .ct{font-family:var(--mono);font-size:10px;color:var(--paper-muted);text-align:right}
-.ask-agent{padding:14px;background:rgba(90,120,255,0.06);border-left:2px solid var(--cobalt);display:flex;gap:10px;align-items:center}
-.ask-agent .glyph{font-family:var(--serif);font-style:italic;color:var(--cobalt);font-size:18px;width:18px}
-.ask-agent input{background:transparent;border:0;padding:0;outline:none;font-family:var(--sans);font-size:13px;color:var(--paper-ink);flex:1}
-.ask-agent input::placeholder{color:var(--paper-muted);font-style:italic}
-.sheet-foot{padding:14px 24px;background:var(--paper-2);display:flex;justify-content:space-between;gap:8px;border-top:1px solid rgba(36,31,22,0.12)}
-.sheet-foot .left{display:flex;gap:8px}
-.sheet-foot .btn{border-color:var(--paper-ink);color:var(--paper-ink)}
-.sheet-foot .btn:hover{background:var(--paper-ink);color:var(--paper)}
-.sheet-foot .btn.primary{background:var(--paper-ink);color:var(--paper)}
-.sheet-foot .btn.primary:hover{background:#0e110e}
-.sheet-foot .btn.del{border-color:#a83a14;color:#a83a14}
-.sheet-foot .btn.del:hover{background:#a83a14;color:var(--paper)}
-.sheet-meta{padding:12px 24px;font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:var(--paper-muted);text-transform:uppercase;border-top:1px dashed rgba(36,31,22,0.15);display:flex;justify-content:space-between}
-.sheet-meta b{color:var(--paper-ink);font-weight:500}
-</style>
-</head>
-<body>
-
-<div class="app" data-screen-label="01 Strip">
-
-  <header class="top">
-    <div class="brand"><span class="mark"></span><span class="brand-name">Matrix</span></div>
-    <div class="who"><b>Carlos</b> · <b>Austin</b> · 13:47</div>
-  </header>
-
-  <div class="agent">
-    <div class="agent-icon">m</div>
-    <div class="agent-msg">
-      I planned the rest of <b>this week</b> using last week's pattern, the menu calendar, and Saturday weather. <b>Two boards still need your eyes</b> — dinner and late service tonight. Sunday brunch and Monday's kickoff are already drafted.
-      <small>Last update 3 min ago · 8 boards drafted · 2 awaiting you</small>
-    </div>
-    <div class="agent-actions">
-      <button class="btn ghost">Show plan</button>
-      <button class="btn primary">Approve all 6</button>
-    </div>
-  </div>
-
-  <div class="days" id="days">
-    <div class="day"><span class="dow">Wed</span><span class="num">15</span><span class="stat">5 aired</span></div>
-    <div class="day"><span class="dow">Thu</span><span class="num">16</span><span class="stat">6 aired</span></div>
-    <div class="day"><span class="dow">Fri</span><span class="num">17</span><span class="stat">7 aired</span></div>
-    <div class="day today sel"><span class="dow">Sat · today</span><span class="num">18</span><span class="stat">3 done · 2 left<span class="draftdot">●</span></span></div>
-    <div class="day future"><span class="dow">Sun</span><span class="num">19</span><span class="stat">3 drafted</span></div>
-    <div class="day future"><span class="dow">Mon</span><span class="num">20</span><span class="stat">closed · 1</span></div>
-    <div class="day future"><span class="dow">Tue</span><span class="num">21</span><span class="stat">open</span></div>
-    <div class="day future"><span class="dow">Wed</span><span class="num">22</span><span class="stat">open</span></div>
-    <div class="day future"><span class="dow">Thu</span><span class="num">23</span><span class="stat">open</span></div>
-    <div class="day future"><span class="dow">Fri</span><span class="num">24</span><span class="stat">open</span></div>
-    <div class="day future"><span class="dow">Sat</span><span class="num">25</span><span class="stat">open</span></div>
-  </div>
-
-  <div class="boards-tabs">
-    <div class="tabs">
-      <button class="tab on"><span class="dot live"></span>Storefront · Aus-01</button>
-      <button class="tab"><span class="dot live"></span>Patio</button>
-      <button class="tab"><span class="dot live"></span>Kitchen</button>
-      <button class="tab"><span class="dot"></span>+ Add board</button>
-    </div>
-    <div class="now-text"><b>now</b> 13:47 · midday brunch</div>
-  </div>
-
-  <div class="strip-wrap">
-    <div class="strip" id="strip">
-      <div class="frame past" data-edit="Close">
-        <div class="frame-when"><b>YESTERDAY 22:00</b><span class="tag">CLOSED</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="closing" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Close<small>Aired · 8h ago</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>8h overnight</b> · no flips</div><div class="gap-line"></div></div><div class="day-mark"><div class="dm-num">18</div><div class="dm-dow">SAT · TODAY</div></div><div class="frame past" data-edit="Morning open">
-        <div class="frame-when"><b>06:00</b><span class="tag">AIRED</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="morning" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Morning open<small>Aired · 7h ago</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>2h</b> · holding</div><div class="gap-line"></div></div><div class="frame past" data-edit="Breakfast service">
-        <div class="frame-when"><b>08:00</b><span class="tag">AIRED</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="breakfast" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Breakfast service<small>Aired · 5h ago</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>4h</b> · holding</div><div class="gap-line"></div></div><div class="frame now" data-edit="Midday brunch">
-        <div class="frame-when"><b>12:00</b><span class="tag">ON AIR · 1h 47m</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="brunch" data-board-product="console" data-autoplay="true"></div></div>
-        <div class="frame-foot">Midday brunch<small>Live · until 14:30</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>43m</b> · until next flip</div><div class="gap-line"></div></div><div class="frame next" data-edit="Saturday reopening">
-        <div class="frame-when"><b>14:30</b><span class="tag">NEXT</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="reopening" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Saturday reopening<small>Drafted by agent · auto-flip</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>1h 30m</b> · holding</div><div class="gap-line"></div></div><div class="frame next" data-edit="Afternoon idle">
-        <div class="frame-when"><b>16:00</b><span class="tag">QUEUED</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="idle" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Afternoon idle<small>From last Saturday</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>2h</b> · holding</div><div class="gap-line"></div></div><div class="frame draft" data-edit="Dinner transition">
-        <div class="frame-when"><b>18:00</b><span class="tag">NEEDS YOU</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="dinner" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Dinner transition<small>Agent waiting on confirmation</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>2h 30m</b> · holding</div><div class="gap-line"></div></div><div class="frame draft" data-edit="Late service">
-        <div class="frame-when"><b>20:30</b><span class="tag">NEEDS YOU</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="late" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Late service<small>Agent waiting on confirmation</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>1h 30m</b> · holding</div><div class="gap-line"></div></div><div class="frame next" data-edit="Close">
-        <div class="frame-when"><b>22:00</b><span class="tag">AUTO</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="closing" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Close<small>Set & forget</small></div>
-      </div><div class="day-mark"><div class="dm-num">19</div><div class="dm-dow">SUN</div></div><div class="frame next" data-edit="Sunday roast prep">
-        <div class="frame-when"><b>08:00</b><span class="tag">AGENT DRAFT</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="breakfast" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Sunday roast prep<small>Drafted overnight · easy week</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>3h</b> · planned holding</div><div class="gap-line"></div></div><div class="frame next" data-edit="Bottomless brunch">
-        <div class="frame-when"><b>11:00</b><span class="tag">AGENT DRAFT</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="brunch" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Bottomless brunch<small>Pulled from menu calendar</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>4h</b> · holding</div><div class="gap-line"></div></div><div class="frame empty" data-edit="Quiet afternoon">
-        <div class="frame-when"><b>15:00</b><span class="tag">OPEN</span></div>
-        <div class="vesta-host"><div class="empty-ask">Nothing scheduled · tap to ask</div></div>
-        <div class="frame-foot">Quiet afternoon<small>Tap to schedule something</small></div>
-      </div><div class="day-mark"><div class="dm-num">20</div><div class="dm-dow">MON</div></div><div class="frame next" data-edit="Mon — week kickoff">
-        <div class="frame-when"><b>06:00</b><span class="tag">WEEKLY</span></div>
-        <div class="vesta-host"><div data-component="mini-vestaboard" data-preset="morning" data-board-product="console" data-autoplay="false"></div></div>
-        <div class="frame-foot">Mon — week kickoff<small>Recurring</small></div>
-      </div><div class="gap"><div class="gap-line"></div><div class="gap-text"><b>all day</b> · closed monday</div><div class="gap-line"></div></div>
-    </div>
-  </div>
-
-  <div class="ask">
-    <div class="ask-glyph">m</div>
-    <input class="ask-input" placeholder="Ask the agent · &ldquo;close early next Tuesday&rdquo;"/>
-    <div class="quick">
-      <button class="q">Plan next week</button>
-      <button class="q">Holiday on May 27</button>
-      <button class="q">Copy this day to next Sat</button>
-    </div>
-  </div>
+.mark{width:32px;height:32px;border-radius:10px;background:linear-gradient(180deg,#1f241f,#131813);border:1px solid var(--line-medium);position:relative;box-shadow:var(--shadow-inset)}
+.mark::after{content:"";position:absolute;inset:4px;border-radius:6px;background:linear-gradient(135deg,var(--accent-ember) 0%,var(--accent-ember) 48%,transparent 48%,transparent 52%,#f7efd9 52%,#f7efd9 100%)}
+.brand h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:24px;line-height:1}
+.brand small{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);display:block;margin-top:2px}
+.eye{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-citron);margin:0}
+.paper .eye{color:#b24a14}
+nav{display:grid;gap:6px;margin-top:4px}
+.nav-item{padding:11px 13px;border-radius:14px;color:var(--text-body);font-size:14px;font-weight:500;cursor:pointer;border:1px solid transparent;display:flex;align-items:center;gap:10px}
+.nav-item.active{background:rgba(255,255,255,0.06);border-color:var(--line-medium);color:var(--text-strong);font-weight:700}
+.nav-item .dot{width:6px;height:6px;border-radius:999px;background:var(--text-muted)}
+.nav-item.active .dot{background:var(--accent-citron)}
+.side-footer{margin-top:auto;display:grid;gap:10px}
+.decision{padding:12px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);font-size:13px;color:var(--text-body)}
+.decision strong{display:block;font-size:13px;margin-bottom:3px;color:var(--text-strong)}
+.btn{position:relative;isolation:isolate;overflow:hidden;appearance:none;border:1px solid transparent;border-radius:14px;padding:11px 16px;min-height:42px;font:inherit;font-weight:800;letter-spacing:-0.01em;cursor:pointer;font-size:14px}
+.btn.primary{color:#180f0a;background:linear-gradient(180deg,#ff8b55,#ff6a2a);box-shadow:0 10px 20px rgba(255,106,42,0.2)}
+.btn.secondary{color:var(--text-strong);background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02));border-color:var(--line-medium)}
+.btn.ghost{color:var(--text-body);background:transparent}
+.chat-head{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid var(--line-soft)}
+.chat-head h2{margin:0;font-family:var(--font-display);font-weight:400;font-size:22px;line-height:1.1}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border-radius:999px;padding:6px 10px;font-size:12px;font-weight:500;border:1px solid var(--line-medium);background:rgba(255,255,255,0.03);color:var(--text-body);display:inline-flex;align-items:center;gap:6px}
+.chip.live{background:rgba(199,214,84,0.12);color:#e9f3a8;border-color:rgba(199,214,84,0.25)}
+.chip.info{background:rgba(90,120,255,0.12);color:#dce4ff;border-color:rgba(90,120,255,0.25)}
+.chip .dot{width:5px;height:5px;border-radius:999px;background:currentColor}
+.stream{flex:1;display:grid;gap:14px;align-content:start;overflow:hidden}
+.msg{padding:12px 14px;border-radius:20px;line-height:1.55;font-size:14px;max-width:85%}
+.msg.u{justify-self:end;background:rgba(90,120,255,0.12);border:1px solid rgba(90,120,255,0.24);color:#e7ecff}
+.msg.a{background:rgba(255,255,255,0.04);border:1px solid var(--line-medium);color:var(--text-strong)}
+.artifact{margin-top:12px;padding:12px;border-radius:18px;background:rgba(0,0,0,0.25);border:1px solid var(--line-soft)}
+.artifact-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.artifact-title{font-weight:700;font-size:13px}
+.composer{border-radius:18px;padding:12px;background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);display:grid;gap:10px}
+.composer textarea{width:100%;min-height:72px;border:0;background:transparent;color:var(--text-strong);font:inherit;font-size:14px;resize:none;outline:none;line-height:1.5}
+.composer-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.suggs{display:flex;gap:6px;flex-wrap:wrap}
+.sugg{padding:5px 9px;border-radius:999px;border:1px solid var(--line-medium);background:rgba(255,255,255,0.02);font-size:12px;color:var(--text-muted);cursor:pointer}
+.paper{background:linear-gradient(180deg,#f2ead7,#e5dbc1);color:#241f16;border-color:rgba(25,31,26,0.1);box-shadow:var(--shadow-1)}
+.paper h3{margin:0;font-family:var(--font-display);font-weight:400;font-size:30px;line-height:1.05}
+.paper small{color:#655b48;font-size:12px}
+.canvas-card{padding:12px;border-radius:14px;background:rgba(33,25,17,0.06);border:1px solid rgba(33,25,17,0.1);font-size:13px;color:#655b48;line-height:1.5}
+.canvas-card strong{color:#241f16;display:block;margin-bottom:3px;font-size:13px}
+.rundown{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--text-muted);text-transform:uppercase}
+</style></head><body><main class="app" data-screen-label="01 Chat workspace">
+<aside class="side">
+<div class="brand"><div class="mark"></div><div><h1>Matrix</h1><small>Control room / v0.1</small></div></div>
+<nav>
+<div class="nav-item active"><span class="dot"></span>Chat</div>
+<div class="nav-item"><span class="dot"></span>Boards</div>
+<div class="nav-item"><span class="dot"></span>Library</div>
+<div class="nav-item"><span class="dot"></span>Data sources</div>
+<div class="nav-item"><span class="dot"></span>Settings</div>
+</nav>
+<div class="side-footer">
+<div class="decision"><strong>Current board</strong>Studio / Austin / Central</div>
+<button class="btn secondary">New chat</button>
 </div>
-
-<div class="sheet" id="edit-sheet">
-  <div class="sheet-card">
-    <div class="sheet-head">
-      <h3>Saturday <em>reopening</em></h3>
-      <div class="sheet-when">14:30 · SAT 18 APR</div>
-    </div>
-    <div class="sheet-body">
-      <div>
-        <label>The three lines (22 chars each)</label>
-        <div class="line-row"><span class="ln">L1</span><input class="line-edit" value="REOPENING"/><span class="ct">9/22</span></div>
-        <div class="line-row"><span class="ln">L2</span><input class="line-edit" value="SATURDAY 8 AM"/><span class="ct">13/22</span></div>
-        <div class="line-row"><span class="ln">L3</span><input class="line-edit" value="CAFE + MARKET"/><span class="ct">13/22</span></div>
-      </div>
-      <div class="ask-agent">
-        <span class="glyph">m</span>
-        <input placeholder="or ask the agent · &ldquo;make it warmer · drop the brand&rdquo;"/>
-      </div>
-    </div>
-    <div class="sheet-meta">
-      <span>Drafted by agent · 11:42 · revision <b>3 of 3</b></span>
-      <span>Auto-flip at <b>14:30</b></span>
-    </div>
-    <div class="sheet-foot">
-      <div class="left">
-        <button class="btn del">Delete slot</button>
-        <button class="btn">Move time</button>
-      </div>
-      <div class="left">
-        <button class="btn" id="edit-cancel">Cancel</button>
-        <button class="btn primary">Save</button>
-      </div>
-    </div>
-  </div>
+</aside>
+<section class="chat">
+<header class="chat-head">
+<div><div class="rundown">Planned composition</div><h2>Saturday reopening deck</h2></div>
+<div class="chips"><span class="chip info">3 screens</span><span class="chip">Draft</span></div>
+</header>
+<div class="stream">
+<div class="msg u">Make a three-screen reopening deck for Saturday. Warm, high-end, scannable from the street.</div>
+<div class="msg a">Drafted a tighter direction: bold opener, offer, location close. Warm palette throughout.
+<div class="artifact">
+<div class="artifact-head"><span class="artifact-title">Deck preview / Saturday reopening</span><span class="chip live"><span class="dot"></span>Ready</span></div>
+<div data-component="mini-vestaboard" data-preset="reopening" data-board-product="console" data-autoplay="true"></div>
 </div>
-
-<script>
-(function(){
-  // Center strip on the live frame
-  const strip = document.getElementById('strip');
-  const live = strip && strip.querySelector('.frame.now');
-  if (strip && live){
-    requestAnimationFrame(()=>{
-      const target = live.offsetLeft - (strip.clientWidth/2) + (live.clientWidth/2);
-      strip.scrollLeft = Math.max(0, target);
-    });
-  }
-  // Day click → just a visual select
-  document.querySelectorAll('.day').forEach(d => d.addEventListener('click', ()=>{
-    document.querySelectorAll('.day').forEach(x => x.classList.remove('sel'));
-    d.classList.add('sel');
-  }));
-  // Tab click
-  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', e => {
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
-    t.classList.add('on');
-  }));
-  // Frame click → open edit sheet
-  const sheet = document.getElementById('edit-sheet');
-  document.querySelectorAll('.frame').forEach(f => f.addEventListener('click', ()=>{
-    const title = f.dataset.edit || 'Edit';
-    const head = sheet.querySelector('.sheet-head h3');
-    head.innerHTML = title.replace(/(\w+)$/, '<em>$1</em>');
-    const when = f.querySelector('.frame-when b').textContent;
-    sheet.querySelector('.sheet-when').textContent = when + ' · SAT 18 APR';
-    sheet.classList.add('open');
-  }));
-  document.getElementById('edit-cancel').addEventListener('click', ()=> sheet.classList.remove('open'));
-  sheet.addEventListener('click', e => { if (e.target === sheet) sheet.classList.remove('open'); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') sheet.classList.remove('open'); });
-})();
-</script>
-
+</div>
+</div>
+<div class="composer">
+<div class="suggs"><span class="sugg">Make it more understated</span><span class="sugg">Shorten screen two</span><span class="sugg">Use blue instead</span></div>
+<textarea>Refine the first screen so it feels more premium and less promotional.</textarea>
+<div class="composer-foot"><small style="color:var(--text-muted);font-size:12px">Magic link only. No password flow in v1.</small><button class="btn primary">Send to Matrix</button></div>
+</div>
+</section>
+<aside class="canvas paper">
+<div><p class="eye">Live preview</p><h3>Current artifact</h3></div>
+<div data-component="mini-vestaboard" data-preset="brunch" data-board-product="console" data-autoplay="true"></div>
+<div class="canvas-card"><strong>Why this matters</strong>Right rail holds preview, rationale, schedule context without feeling like an afterthought.</div>
+<div class="canvas-card"><strong>Next publish</strong>08:00 / Studio board / runs through 14:00.</div>
+<button class="btn secondary" style="color:#241f16;background:rgba(33,25,17,0.06);border-color:rgba(33,25,17,0.15)">Open schedule preview</button>
+</aside>
+</main>
 <script>// ===== matrix-system.js (concatenated from system/*.js) =====
 
 (function(global){
@@ -2705,5 +2450,5 @@ global.MatrixDS = { bootDesignSystemPage, MATRIX_DESIGN_SYSTEM, applyTheme, atta
 
 })(window);
 MatrixDS.bootDesignSystemPage(document)</script>
-<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0e110e"/><rect x="10" y="38" width="22" height="24" fill="#3a3a32" opacity="0.4"/><rect x="38" y="34" width="24" height="32" fill="#f2ead7"/><rect x="68" y="38" width="22" height="24" fill="#3a3a32" opacity="0.6"/></svg></template>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#131813"/><rect x="22" y="22" width="56" height="56" rx="6" fill="#0e110e" stroke="#ff6a2a" stroke-width="2"/><text x="50" y="58" text-anchor="middle" fill="#f7efd9" font-family="serif" font-size="18" font-style="italic">M</text></svg></template>
 </body></html>
