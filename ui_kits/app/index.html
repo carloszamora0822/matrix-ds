@@ -27,7 +27,7 @@
   /* --- Composition artboard (three-column) --- */
   .app{width:min(1400px,calc(100vw - 40px));margin:0 auto 24px;padding:20px;display:grid;grid-template-columns:68px 1fr 380px;gap:16px;min-height:720px;border-radius:var(--radius-card);border:1px solid var(--line-soft);background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0)),var(--bg-app)}
   aside.side{border-radius:20px;border:1px solid var(--line-soft);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0)),var(--bg-shell);box-shadow:var(--shadow-inset);padding:14px 10px;display:flex;flex-direction:column;gap:10px;align-items:center;transition:width var(--speed-base) var(--ease-standard)}
-  section.chat,aside.canvas{border-radius:20px;border:1px solid var(--line-soft);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0)),var(--bg-shell);box-shadow:var(--shadow-1),var(--shadow-inset);padding:18px;display:flex;flex-direction:column;gap:16px}
+  section.chat,aside.canvas{border-radius:20px;border:1px solid var(--line-soft);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0)),var(--bg-shell);box-shadow:var(--shadow-1),var(--shadow-inset);padding:18px;display:flex;flex-direction:column;gap:16px;min-width:0}
   .brand-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(180deg,#1f241f,#131813);border:1px solid var(--line-medium);position:relative;box-shadow:var(--shadow-inset);flex-shrink:0}
   .brand-icon::after{content:"";position:absolute;inset:5px;border-radius:6px;background:linear-gradient(135deg,var(--accent-ember) 0%,var(--accent-ember) 48%,transparent 48%,transparent 52%,#f7efd9 52%,#f7efd9 100%)}
   .nav-collapsed{display:grid;gap:6px;margin-top:8px}
@@ -48,7 +48,7 @@
   .msg{padding:12px 14px;border-radius:20px;line-height:1.55;font-size:14px;max-width:85%}
   .msg.u{justify-self:end;background:rgba(90,120,255,0.12);border:1px solid rgba(90,120,255,0.24);color:#e7ecff}
   .msg.a{background:rgba(255,255,255,0.04);border:1px solid var(--line-medium);color:var(--text-strong)}
-  .artifact{margin-top:12px;padding:12px;border-radius:18px;background:rgba(0,0,0,0.25);border:1px solid var(--line-soft)}
+  .artifact{margin-top:12px;padding:12px;border-radius:18px;background:rgba(0,0,0,0.25);border:1px solid var(--line-soft);min-width:0}
   .artifact-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
   .artifact-title{font-weight:700;font-size:13px;color:var(--text-strong)}
   .composer{border-radius:18px;padding:12px;background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);display:grid;gap:10px}
@@ -62,7 +62,8 @@
   .canvas.paper{background:linear-gradient(180deg,var(--bg-paper),var(--bg-paper-2));color:var(--text-dark);border-color:rgba(25,31,26,0.1);box-shadow:var(--shadow-1)}
   .canvas.paper .rail-eye{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#b24a14;margin:0}
   .canvas.paper h3{margin:4px 0 0;font-family:var(--font-display);font-weight:400;font-size:28px;line-height:1.05;color:var(--text-dark)}
-  .canvas-frame{background:#080808;border-radius:18px;padding:4px;aspect-ratio:22/6}
+  .canvas-frame{background:#080808;border-radius:18px;padding:4px;overflow:hidden;display:grid;place-items:stretch}
+  .canvas-frame > *{width:100%;min-width:0}
   .canvas-card{padding:12px;border-radius:14px;background:rgba(33,25,17,0.06);border:1px solid rgba(33,25,17,0.1);font-size:13px;color:#655b48;line-height:1.5}
   .canvas-card strong{color:#241f16;display:block;margin-bottom:3px;font-size:13px}
 
@@ -89,18 +90,19 @@
 
   /* --- Boards list artboard --- */
   .boards-app{width:min(1400px,calc(100vw - 40px));margin:0 auto 80px;padding:20px;display:grid;grid-template-columns:68px 1fr;gap:16px;min-height:720px;border-radius:var(--radius-card);border:1px solid var(--line-soft);background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0)),var(--bg-app)}
-  .boards-main{border-radius:20px;border:1px solid var(--line-soft);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0)),var(--bg-shell);box-shadow:var(--shadow-1),var(--shadow-inset);padding:28px 32px;display:flex;flex-direction:column;gap:22px;overflow:hidden}
+  .boards-main{border-radius:20px;border:1px solid var(--line-soft);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0)),var(--bg-shell);box-shadow:var(--shadow-1),var(--shadow-inset);padding:28px 32px;display:flex;flex-direction:column;gap:22px;overflow:hidden;min-width:0}
   .boards-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
   .boards-head h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:40px;line-height:1;letter-spacing:-0.01em;color:var(--text-strong)}
   .boards-head .eye{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-citron);margin:0 0 4px 0}
   .boards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-  .bc{padding:16px;border-radius:var(--radius-panel);background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);display:grid;gap:14px}
+  .bc{padding:16px;border-radius:var(--radius-panel);background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);display:grid;gap:14px;min-width:0}
   .bc.pair-new{border-style:dashed;background:transparent;align-items:center;justify-items:center;min-height:240px;color:var(--text-muted);cursor:pointer}
   .bc.pair-new:hover{color:var(--text-strong);border-color:var(--line-medium);background:rgba(255,255,255,0.02)}
   .bc-head{display:flex;align-items:center;gap:10px}
   .bc-name{font-weight:700;font-size:15px;color:var(--text-strong)}
   .bc-meta{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-left:auto}
-  .bc-preview{background:#080808;border-radius:12px;aspect-ratio:22/6}
+  .bc-preview{background:#080808;border-radius:12px;padding:4px;overflow:hidden;display:grid;place-items:stretch}
+  .bc-preview > *{width:100%;min-width:0}
   .bc-footer{font-size:12px;color:var(--text-muted);line-height:1.4}
   .pair-plus{font-size:32px;font-weight:300;line-height:1}
   .pair-text{font-size:13px}

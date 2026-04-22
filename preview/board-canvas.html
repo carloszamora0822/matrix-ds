@@ -5,7 +5,8 @@ html,body{margin:0;padding:0;background:var(--bg-app);color:var(--text-strong);f
 .rail{background:linear-gradient(180deg,var(--bg-paper),var(--bg-paper-2));border-radius:var(--radius-card);padding:22px;display:grid;gap:16px;max-width:380px;color:var(--text-dark);box-shadow:var(--shadow-1),var(--shadow-inset)}
 .rail h3{margin:0;font-family:var(--font-display);font-weight:400;font-size:28px;line-height:1.05;color:var(--text-dark)}
 .rail .rail-eye{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#b24a14;margin:0 0 4px 0}
-.canvas-frame{background:#080808;border-radius:18px;padding:6px;aspect-ratio:22/6}
+.canvas-frame{background:#080808;border-radius:18px;padding:6px;overflow:hidden;display:grid;place-items:stretch}
+.canvas-frame > *{width:100%;min-width:0}
 .note{font-size:13px;color:var(--text-dark-muted);line-height:1.5;padding:10px 12px;border-radius:12px;background:rgba(33,25,17,0.06);border:1px solid rgba(33,25,17,0.08)}
 .note strong{color:var(--text-dark);display:block;margin-bottom:2px;font-size:13px}
 </style></head><body><div class="card">

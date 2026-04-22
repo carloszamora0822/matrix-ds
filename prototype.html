@@ -60,7 +60,7 @@
   .specimen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
   .specimen-grid.wide{grid-template-columns:repeat(auto-fill,minmax(420px,1fr))}
   .specimen-grid.full{grid-template-columns:1fr}
-  .specimen{padding:20px;border-radius:var(--radius-panel);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0)),var(--bg-shell);border:1px solid var(--line-soft);box-shadow:var(--shadow-inset);display:grid;gap:14px;align-content:start}
+  .specimen{padding:20px;border-radius:var(--radius-panel);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0)),var(--bg-shell);border:1px solid var(--line-soft);box-shadow:var(--shadow-inset);display:grid;gap:14px;align-content:start;min-width:0}
   .specimen-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin:0}
   .specimen .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   .specimen-note{font-size:12px;color:var(--text-muted);line-height:1.5;margin:0}
@@ -127,23 +127,25 @@
   .composer-suggs{display:flex;gap:6px;flex-wrap:wrap}
 
   /* --- Domain: artifact (inline board card in message) --- */
-  .artifact{margin-top:10px;padding:12px;border-radius:18px;background:rgba(0,0,0,0.25);border:1px solid var(--line-soft);display:grid;gap:10px}
+  .artifact{margin-top:10px;padding:12px;border-radius:18px;background:rgba(0,0,0,0.25);border:1px solid var(--line-soft);display:grid;gap:10px;min-width:0}
   .artifact-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
   .artifact-title{font-weight:700;font-size:13px;color:var(--text-strong)}
 
   /* --- Domain: board card (in Boards list) --- */
-  .bc{padding:14px;border-radius:var(--radius-panel);background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);display:grid;gap:12px}
+  .bc{padding:14px;border-radius:var(--radius-panel);background:rgba(255,255,255,0.03);border:1px solid var(--line-soft);display:grid;gap:12px;min-width:0}
   .bc-head{display:flex;align-items:center;gap:10px}
   .bc-name{font-weight:700;font-size:14px;color:var(--text-strong)}
   .bc-meta{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-left:auto}
-  .bc-preview{background:#080808;border-radius:12px;aspect-ratio:22/6;overflow:hidden}
+  .bc-preview{background:#080808;border-radius:12px;padding:4px;overflow:hidden;display:grid;place-items:stretch}
+  .bc-preview > *{width:100%;min-width:0}
   .bc-footer{font-size:12px;color:var(--text-muted);line-height:1.4}
 
   /* --- Domain: board canvas (paper rail) --- */
   .rail{background:linear-gradient(180deg,var(--bg-paper),var(--bg-paper-2));border-radius:var(--radius-card);padding:20px;display:grid;gap:14px;color:var(--text-dark);box-shadow:var(--shadow-1),var(--shadow-inset)}
   .rail h3{margin:0;font-family:var(--font-display);font-weight:400;font-size:26px;line-height:1.05;color:var(--text-dark)}
   .rail .rail-eye{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#b24a14;margin:0 0 4px 0}
-  .canvas-frame{background:#080808;border-radius:18px;padding:4px;aspect-ratio:22/6}
+  .canvas-frame{background:#080808;border-radius:18px;padding:4px;overflow:hidden;display:grid;place-items:stretch}
+  .canvas-frame > *{width:100%;min-width:0}
   .rail-note{font-size:12px;color:var(--text-dark-muted);line-height:1.5;padding:10px 12px;border-radius:12px;background:rgba(33,25,17,0.06);border:1px solid rgba(33,25,17,0.08)}
   .rail-note strong{color:var(--text-dark);display:block;margin-bottom:2px}
 
